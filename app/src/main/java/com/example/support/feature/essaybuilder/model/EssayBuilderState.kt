@@ -6,7 +6,8 @@ data class EssayBuilderState(
     val score: Int = 0,
     val questionParts: List<Part> = emptyList(),
     val options: List<OptionUiModel> = emptyList(),
-    val currentBlanks: List<String?> = emptyList(),
+    val currentBlanks: List<BlanksUiModel?> = emptyList(),
+    val correctAnswers: List<String> = emptyList(),
     val timer: Int = 30,
     val isAnswerChecked: Boolean = false,
     val result: EssayBuilderResult? = null,
@@ -28,6 +29,11 @@ data class EssayBuilderState(
         val isUsed: Boolean = false
     )
 
+    data class BlanksUiModel(
+        val word: String,
+        val isSelected: Boolean = true,
+        val isCorrect: Boolean = false
+    )
 
     sealed class EssayBuilderResult {
         data object Success : EssayBuilderResult()

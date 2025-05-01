@@ -42,7 +42,7 @@ fun EssayBuilderQuestionContent(
                     }
                     is EssayBuilderState.Part.Blank -> {
                         EssayBlank(
-                            word = state.currentBlanks.getOrNull(part.index),
+                            blank = state.currentBlanks.getOrNull(part.index),
                             onClick = { controller.onBlankClick(part.index) }
                         )
                     }

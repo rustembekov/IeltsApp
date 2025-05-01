@@ -16,37 +16,35 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.support.core.ui.AppTheme
+import com.example.support.feature.essaybuilder.model.EssayBuilderState
 
 @Composable
-fun EssayBlank(
-    word: String?,
-    onClick: () -> Unit
-) {
+fun EssayBlank(blank: EssayBuilderState.BlanksUiModel?, onClick: () -> Unit) {
+    val bgColor = when {
+        blank == null -> Color.Gray
+        blank.isCorrect -> Color(0xFF4CAF50) // green
+        !blank.isCorrect && blank.isSelected -> Color(0xFFF44336) // red
+        else -> Color.Gray
+    }
+
     Box(
-        contentAlignment = Alignment.Center,
         modifier = Modifier
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { onClick() })
-            }
+            .pointerInput(Unit) { detectTapGestures { onClick() } }
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceVariant)
-            .border(1.dp, MaterialTheme.colorScheme.outline)
+            .background(bgColor)
             .padding(horizontal = 24.dp, vertical = 8.dp)
     ) {
-        Text(
-            text = word ?: "______",
-            style = MaterialTheme.typography.displaySmall,
-            color = if (word != null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Gray
-        )
+        Text(text = blank?.word ?: "______")
     }
 }
+
 
 @Preview
 @Composable
 private fun EssayBlankPreview() {
     AppTheme {
         EssayBlank(
-            word = null,
+            blank = null,
             onClick = {}
         )
     }

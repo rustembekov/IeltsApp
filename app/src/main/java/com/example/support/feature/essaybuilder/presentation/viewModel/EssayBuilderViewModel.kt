@@ -100,6 +100,7 @@ class EssayBuilderViewModel @Inject constructor(
                             options = game.options.map { EssayBuilderState.OptionUiModel(word = it) },
                             currentBlanks = currentBlanks,
                             result = EssayBuilderResult.Success,
+                            correctAnswers = game.correctAnswers
                         )
                     )
                 }
@@ -113,29 +114,42 @@ class EssayBuilderViewModel @Inject constructor(
 
     private fun checkAnswer() {
         val currentState = uiState.value
-//        val isCorrect = currentState.userInput == currentState.answer
+        val correctAnswers = currentState.correctAnswers.toSet()
 
-//        if (isCorrect) {
-//            updateState(
-//                currentState.copy(
-//                    isShownCorrectAnswer = true,
-//                    score = currentState.score + 30
-//                )
-//            )
-//
-//            viewModelScope.launch {
-//                delay(1500L)
-//                updateState(uiState.value.copy(isShownCorrectAnswer = false))
-//            }
-//        } else {
-//            hapticFeedbackManager.vibrate(200)
-//        }
+        val updatedBlanks = currentState.currentBlanks.map { blank ->
+            blank?.copy(
+                isCorrect = correctAnswers.contains(blank.word),
+                isSelected = true
+            )
+        }
+
+        val selectedAnswers = updatedBlanks.mapNotNull { it?.word }.toSet()
+        val numCorrectSelected = selectedAnswers.count { correctAnswers.contains(it) }
+
+        val scoreIncrement = numCorrectSelected * 10
+
+        updateState(currentState.copy(
+            currentBlanks = updatedBlanks,
+            score = currentState.score + scoreIncrement
+        ))
 
         timerManager.pauseTimer()
 
-        loadNextQuestion()
+        if (selectedAnswers == correctAnswers) {
+            viewModelScope.launch {
+                delay(1500L)
+                loadNextQuestion()
+                timerManager.resumeTimer()
+            }
+        } else {
+            hapticFeedbackManager.vibrate(200)
 
-        timerManager.resumeTimer()
+            viewModelScope.launch {
+                delay(1500L)
+                loadNextQuestion()
+                timerManager.resumeTimer()
+            }
+        }
     }
 
 
@@ -164,12 +178,11 @@ class EssayBuilderViewModel @Inject constructor(
         val selectedWord = state.selectedWord
         val currentBlanks = state.currentBlanks.toMutableList()
 
-        val removedWord = currentBlanks[index]
-        if (removedWord != null) {
+        val removed = currentBlanks[index]
+        if (removed != null) {
             val updatedOptions = state.options.map {
-                if (it.word == removedWord) it.copy(isUsed = false) else it
+                if (it.word == removed.word) it.copy(isUsed = false) else it
             }
-
             currentBlanks[index] = null
 
             updateState(
@@ -180,7 +193,8 @@ class EssayBuilderViewModel @Inject constructor(
             )
         } else if (selectedWord != null) {
             if (state.options.any { it.word == selectedWord && !it.isUsed }) {
-                currentBlanks[index] = selectedWord
+                currentBlanks[index] = EssayBuilderState.BlanksUiModel(word = selectedWord)
+
                 val updatedOptions = state.options.map {
                     if (it.word == selectedWord) it.copy(isUsed = true, isSelected = false) else it
                 }
@@ -194,19 +208,6 @@ class EssayBuilderViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-
-    private fun checkAnswerAndGoToNextQuestion() {
-        val currentState = uiState.value
-        updateState(
-            currentState.copy(
-                isAnswerChecked = true,
-                result = EssayBuilderResult.Success
-            )
-        )
-
-        // TODO: Later you can add logic to load the next question here
     }
 
     override fun onPauseClicked() {
