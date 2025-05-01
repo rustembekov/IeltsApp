@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">IELTS-APP</string>
+    <string name="inspiration">Let\'s learn together!</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="register">Registration</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="no_account_login">Don’t have an account? </string>
+
+    <string name="no_account_register">Don’t have an account?  Login page</string>
+    <string name="back_to_login">Back to login</string>
+
+    <string name="hi_name">Hi, %1$s!</string>
+    <string name="ranking">Ranking</string>
+    <string name="points">Points</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="play_games">Play games</string>
+    <string name="see_more">See more</string>
+    <string name="score_points">%1$s Points</string>
+    <string name="play">Play</string>
+    <string name="all_games">All games</string>
+    <string name="profile">Profile</string>
+    <string name="edit_picture">Edit Picture</string>
+    <string name="edit_name">Edit Name</string>
+
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="login_security">Login &amp; Security</string>
+    <string name="delete_account">Delete account</string>
+
+    <string name="fact_opinion">Fact or Opinion</string>
+    <string name="phrasal_verbs">Phrasal Verbs</string>
+    <string name="keywords_check">Keywords Check</string>
+    <string name="synonyms">Synonyms</string>
+    <string name="essay_builder">Essay Builder</string>
+
+    <string name="pause">Pause</string>
+    <string name="check">Check</string>
+    <string name="quit">Quit</string>
+
+    <string name="game_complete">Game Complete</string>
+    <string name="new_game">New Game</string>
+
+    <string name="fact">Fact</string>
+    <string name="opinion">Opinion</string>
+
+    <string name="paused">Paused</string>
+
+
+
+</resources>

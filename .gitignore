@@ -1,0 +1,92 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+*.kt~
+*.kts~
+
+# IntelliJ IDEA / Android Studio
+.idea/
+*.iml
+*.iws
+*.ipr
+*.sw?
+*.bak
+
+# Local configuration
+local.properties
+.settings/
+.DS_Store
+
+# OS-generated
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+*.log
+
+# Android Studio Navigation Editor temp files
+.navigation/
+
+# Cache
+.cache/
+.cxx/
+
+# JetBrains IDE indexing
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/caches
+.idea/modules.xml
+
+# Gradle wrapper logs
+gradlew.bat
+gradlew
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Hilt & Kapt
+build/generated/
+build/tmp/
+.kapt/
+.ksp/
+
+# Firebase
+.firebase/
+
+# Signing and secrets
+*.jks
+*.keystore
+keystore.properties
+google-services.json
+
+# Compose previews
+*.preview.db
+composeCompiler/
+
+# Room schema
+schemas/
+
+# Lint
+lint/reports/
+lint/intermediates/
+
+# Mac specific
+*.DS_Store
+
+# Windows specific
+*.exe
+*.dll
+*.lnk
