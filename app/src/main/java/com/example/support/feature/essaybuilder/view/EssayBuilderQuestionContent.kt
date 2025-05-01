@@ -10,14 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.support.core.ui.AppTheme
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
-import com.example.support.feature.essaybuilder.viewModel.EssayBuilderController
-import androidx.compose.foundation.layout.Row
+import com.example.support.feature.essaybuilder.presentation.viewModel.EssayBuilderController
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 
@@ -29,51 +26,40 @@ fun EssayBuilderQuestionContent(
     state: EssayBuilderState,
     controller: EssayBuilderController
 ) {
-    val blanks = remember { mutableStateListOf(*state.currentBlanks.toTypedArray()) }
-
     Column(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             state.questionParts.forEach { part ->
                 when (part) {
                     is EssayBuilderState.Part.Text -> {
-                        BasicText(
+                        Text(
                             text = part.text,
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     is EssayBuilderState.Part.Blank -> {
                         EssayBlank(
-                            word = blanks[part.index],
-                            onWordDropped = { word ->
-                                blanks[part.index] = word
-                                controller.updateBlanks(blanks)
-                            }
+                            word = state.currentBlanks.getOrNull(part.index),
+                            onClick = { controller.onBlankClick(part.index) }
                         )
                     }
                 }
             }
         }
 
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             state.options.forEach { option ->
-                DraggableWord(word = option)
+                DraggableWord(
+                    option = option,
+                    onClick = { if (!option.isUsed) controller.onWordClick(option.word) }
+                )
             }
         }
-
     }
 }
-
 
 
 @Preview(showBackground = true)
@@ -81,19 +67,25 @@ fun EssayBuilderQuestionContent(
 private fun EssayBuilderQuestionContentPreview() {
     val mockState = EssayBuilderState(
         questionParts = listOf(
-            EssayBuilderState.Part.Text("The capital of France is"),
+            EssayBuilderState.Part.Text("In modern society,"),
             EssayBuilderState.Part.Blank(0),
-            EssayBuilderState.Part.Text(". It is known for the"),
+            EssayBuilderState.Part.Text("has become a major concern for governments worldwide.\u2028Addressing this issue is essential to ensure a"),
             EssayBuilderState.Part.Blank(1),
-            EssayBuilderState.Part.Text(".")
+            EssayBuilderState.Part.Text("future for the next generations.")
         ),
-        options = listOf("Paris", "Eiffel Tower", "pizza", "Berlin", "museum", "croissant"),
-        currentBlanks = listOf(null, null) // Two blanks, initially empty
+//        options = listOf("pollution", "education", "sustainable", "dangerous"),
+        currentBlanks = listOf(null, null)
     )
 
     val mockController = object : EssayBuilderController {
         override fun onEvent(event: EssayBuilderEvent) {}
-        override fun updateBlanks(blanks: List<String?>) {}
+        override fun onWordClick(word: String) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onBlankClick(index: Int) {
+            TODO("Not yet implemented")
+        }
     }
 
     AppTheme {

@@ -1,9 +1,9 @@
-package com.example.support.feature.essaybuilder.viewModel
+package com.example.support.feature.essaybuilder.presentation.viewModel
 
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 
 interface EssayBuilderController {
     fun onEvent(event: EssayBuilderEvent)
-    fun updateBlanks(blanks: List<String?>)
-
+    fun onWordClick(word: String)
+    fun onBlankClick(index: Int)
 }

@@ -1,18 +1,19 @@
-package com.example.support.feature.essaybuilder.view;
+package com.example.support.feature.essaybuilder.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable;
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
-import com.example.support.feature.essaybuilder.viewModel.EssayBuilderController
+import com.example.support.feature.essaybuilder.presentation.viewModel.EssayBuilderController
 
 @Composable
 fun EssayBuilderScreen(
@@ -20,6 +21,9 @@ fun EssayBuilderScreen(
     state: EssayBuilderState,
     controller: EssayBuilderController
 ) {
+    LaunchedEffect(Unit) {
+        controller.onEvent(event = EssayBuilderEvent.StartGame)
+    }
     when (state.result) {
         is EssayBuilderState.EssayBuilderResult.Loading -> {
             Box(
@@ -64,7 +68,12 @@ private fun EssayBuilderScreenPreview() {
             TODO("Not yet implemented")
         }
 
-        override fun updateBlanks(blanks: List<String?>) {
+
+        override fun onWordClick(word: String) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onBlankClick(index: Int) {
             TODO("Not yet implemented")
         }
 

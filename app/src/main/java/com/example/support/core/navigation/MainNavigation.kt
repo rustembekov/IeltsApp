@@ -30,7 +30,7 @@ import com.example.support.feature.rating.view.RatingScreen
 import com.example.support.core.di.NavHolder
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
 import com.example.support.feature.essaybuilder.view.EssayBuilderScreen
-import com.example.support.feature.essaybuilder.viewModel.EssayBuilderViewModel
+import com.example.support.feature.essaybuilder.presentation.viewModel.EssayBuilderViewModel
 import com.example.support.feature.factopinion.model.FactOpinionState
 import com.example.support.feature.factopinion.view.FactOpinionScreen
 import com.example.support.feature.factopinion.presentation.viewModel.FactOpinionViewModel

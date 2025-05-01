@@ -1,5 +1,6 @@
 package com.example.support.feature.phrasalverbs.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
 import com.example.support.core.navigation.Navigator
@@ -91,6 +92,7 @@ class PhrasalVerbsViewModel @Inject constructor(
                             userInput = ""
                         )
                     )
+                    Log.d("PhrasalVerbsViewModel", "Answer: ${uiState.value.answer}")
                 }
 
                 is ResultCore.Failure -> {
@@ -132,7 +134,15 @@ class PhrasalVerbsViewModel @Inject constructor(
             )
         )
     }
+    override fun onPauseClicked() {
+        super.onPauseClicked()
+        timerManager.pauseTimer()
+    }
 
+    override fun onResumePauseDialog() {
+        super.onResumePauseDialog()
+        timerManager.resumeTimer()
+    }
     override fun onCleared() {
         super.onCleared()
         timerManager.stopTimer()

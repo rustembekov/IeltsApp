@@ -1,5 +1,6 @@
 package com.example.support.core.di
 import com.example.support.core.data.UserRepository
+import com.example.support.feature.essaybuilder.presentation.repository.EssayBuilderGameRepository
 import com.example.support.feature.factopinion.presentation.repository.FactOpinionGameRepository
 import com.example.support.feature.gamecompletion.presentation.repository.GameCompletionRepository
 import com.example.support.feature.gamecompletion.presentation.repository.GameCompletionRepositoryImpl
@@ -53,10 +54,17 @@ object FirebaseModule {
     fun provideSynonymsRepository(database: DatabaseReference): SynonymsGameRepository {
         return SynonymsGameRepository(database)
     }
+
     @Provides
     @Singleton
     fun provideKeywordsCheckRepository(database: DatabaseReference): KeywordsCheckGameRepository {
         return KeywordsCheckGameRepository(database)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEssayBuilderRepository(database: DatabaseReference): EssayBuilderGameRepository {
+        return EssayBuilderGameRepository(database)
     }
 
     @Provides

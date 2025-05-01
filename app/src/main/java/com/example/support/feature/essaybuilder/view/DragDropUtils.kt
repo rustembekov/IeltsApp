@@ -2,7 +2,6 @@ package com.example.support.feature.essaybuilder.view
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.foundation.gestures.detectTapGestures
 
 private var draggedWord: String? = null
