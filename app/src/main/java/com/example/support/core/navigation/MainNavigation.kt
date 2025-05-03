@@ -1,5 +1,6 @@
 package com.example.support.core.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
@@ -9,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -28,6 +30,7 @@ import com.example.support.feature.profile.view.ProfileScreen
 import com.example.support.feature.seemore.view.SeeMoreScreen
 import com.example.support.feature.rating.view.RatingScreen
 import com.example.support.core.di.NavHolder
+import com.example.support.core.ui.AppTheme.colors
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
 import com.example.support.feature.essaybuilder.view.EssayBuilderScreen
 import com.example.support.feature.essaybuilder.presentation.viewModel.EssayBuilderViewModel
@@ -91,7 +94,15 @@ fun MainNavigation(
     Scaffold(
         modifier = modifier
             .fillMaxSize()
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        colors.backgroundGradientFirst,
+                        colors.backgroundGradientSecond
+                    )
+                )
+            ),
         containerColor = Color.Transparent,
 
         bottomBar = {

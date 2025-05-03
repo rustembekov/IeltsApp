@@ -108,7 +108,7 @@ fun RegisterScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 80.dp),
+                .padding(bottom = 70.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -174,6 +174,7 @@ private fun RegisterForm(
                 onClick = { controller.onEvent(RegisterScreenEvent.RegisterButtonClicked) },
                 text = stringResource(id = R.string.register)
             )
+
             RegisterFooter(
                 controller = controller
             )
@@ -210,7 +211,7 @@ private fun RegisterFooter(
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = stringResource(id = R.string.back_to_login),
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodyMedium,
             color = ColorApp.authContentPrimary,
             modifier = Modifier
                 .clickable { controller.onLoginClick() }

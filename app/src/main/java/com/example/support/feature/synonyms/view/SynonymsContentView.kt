@@ -71,17 +71,7 @@ fun SynonymsContentView(
                     timer = state.timer
                 )
 
-                Text(
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(
-                            color = colors.homeItemBackground
-                        )
-                        .padding(8.dp),
-                    text = state.category,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                SynonymsContentTopic(state = state)
                 SynonymsQuestionCard(
                     controller = controller,
                     state = state
@@ -150,7 +140,8 @@ private fun SynonymsContentViewPreview() {
     AppTheme {
         SynonymsContentView(
             state = SynonymsState(
-                category = "Emoji: Cheerful",
+                category = "Emoji",
+                mainWord = "Cheerful",
                 options = options,
                 correctAnswers = listOf("Happy", "Joyful", "Glad")
             ),

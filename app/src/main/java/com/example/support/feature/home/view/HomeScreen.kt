@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.domain.GameModel
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.home.model.HomeEvent
 import com.example.support.feature.home.model.HomeResult
 import com.example.support.feature.home.model.HomeState
@@ -37,17 +38,14 @@ fun HomeScreen(
         }
 
         state.result is HomeResult.Error -> {
-            val errorMessage = (state.result as? HomeResult.Error)?.message ?: "Unknown error"
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            val errorMessage = (state.result as? HomeResult.Error)?.message ?: "Something went wrong"
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.onEvent(HomeEvent.LoadGames)
+                    controller.onEvent(HomeEvent.LoadUser)
+                }
+            )
         }
 
         else -> {

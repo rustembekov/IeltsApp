@@ -15,7 +15,7 @@ fun HeaderGameText(
     Text(
         text = stringResource(strResource),
         color = AppTheme.colors.homeItemPrimary,
-        style = MaterialTheme.typography.bodyLarge
+        style = MaterialTheme.typography.titleLarge
     )
 }
 

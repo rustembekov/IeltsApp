@@ -31,24 +31,33 @@ fun EssayBuilderQuestionContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp), // smaller spacing to feel like text
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             state.questionParts.forEach { part ->
                 when (part) {
                     is EssayBuilderState.Part.Text -> {
                         Text(
                             text = part.text,
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = AppTheme.colors.homeItemPrimary,
                         )
                     }
+
                     is EssayBuilderState.Part.Blank -> {
                         EssayBlank(
                             blank = state.currentBlanks.getOrNull(part.index),
-                            onClick = { controller.onBlankClick(part.index) }
+                            onClick = { controller.onBlankClick(part.index) },
+                            modifier = Modifier
+                                .alignByBaseline()
                         )
                     }
                 }
             }
         }
+
 
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             state.options.forEach { option ->

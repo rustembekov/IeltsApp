@@ -54,7 +54,7 @@ fun CircularTimer(
         }
         Text(
             text = "$timer",
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = AppTheme.colors.primary
         )
     }

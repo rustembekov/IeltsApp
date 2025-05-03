@@ -11,6 +11,7 @@ data class KeywordsCheckState(
     val timer: Int = Constants.GAME_TIMER_DURATION,
     val hasStarted: Boolean = false,
     val result: KeywordsCheckResult = KeywordsCheckResult.Loading,
+    val maxSelectableWords: Int = 0,
     val keywordsCheckEvent: KeywordsCheckEvent? = null,
     override val isPauseDialogVisible: Boolean = false
 ): PauseState {

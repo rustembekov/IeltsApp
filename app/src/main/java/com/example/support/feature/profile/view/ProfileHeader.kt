@@ -67,7 +67,7 @@ fun ProfileHeader(
         ){
             Text(
                 text = stringResource(R.string.profile),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.primary
             )
             FormSection(
@@ -134,7 +134,7 @@ private fun FormSection(
         }
         Text(
             text = state.user?.username ?: "No Username",
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary
         )
         Row(
@@ -168,7 +168,7 @@ private fun ProfileEditButton(
     ) {
         Text(
             text = stringResource(strResource),
-            style = MaterialTheme.typography.displaySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary)
     }
 }
@@ -186,6 +186,10 @@ private fun ProfileHeaderPreview() {
         }
 
         override fun onImagePicked(uri: Uri) {
+            TODO("Not yet implemented")
+        }
+
+        override fun loadUser() {
             TODO("Not yet implemented")
         }
 

@@ -64,7 +64,7 @@ fun AppTheme(
 
         // Hide the system navigation bar
         systemUiController.setNavigationBarColor(
-            color = Color.Transparent,
+            color = appColors.background,
             darkIcons = useDarkIcons
         )
 
@@ -74,7 +74,7 @@ fun AppTheme(
         )
 
         // Hide navigation bar
-        systemUiController.isNavigationBarVisible = false
+//        systemUiController.isNavigationBarVisible = false
 
         onDispose {}
     }

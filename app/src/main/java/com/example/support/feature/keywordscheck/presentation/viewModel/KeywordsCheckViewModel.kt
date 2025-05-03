@@ -63,9 +63,6 @@ class KeywordsCheckViewModel @Inject constructor(
                 checkAnswer()
             }
         }
-        Log.d("KeywordsCheckEvent", "Current Question: " + uiState.value.currentQuestion)
-
-        Log.d("KeywordsCheckEvent", "Correct Answer: " + uiState.value.correctAnswers)
     }
 
     private fun startGame() {
@@ -85,12 +82,17 @@ class KeywordsCheckViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = gameManager.getNextQuestion()) {
                 is ResultCore.Success -> {
+                    val computedMax = result.data.answers.sumOf { it.split(" ").size }
+                    Log.d("KeywordsCheckEvent", "Current Question: " + result.data.text)
+
+                    Log.d("KeywordsCheckEvent", "Correct Answer: " + result.data.answers)
                     updateState(
                         uiState.value.copy(
                             currentQuestion = result.data.text,
                             correctAnswers = result.data.answers,
                             result = KeywordsCheckResult.Success,
-                            selectedWords = emptyList()
+                            selectedWords = emptyList(),
+                            maxSelectableWords = computedMax
                         )
                     )
                 }
@@ -104,44 +106,57 @@ class KeywordsCheckViewModel @Inject constructor(
 
     private fun checkAnswer() {
         val currentState = uiState.value
-        val correctAnswers = currentState.correctAnswers.toSet()
+        val correctPhrases = currentState.correctAnswers
+        val selectedWordSet = currentState.selectedWords.map { it.text }.toSet()
+        val questionWords = currentState.currentQuestion
+            .replace(Regex("[.,;]"), "")
+            .split(" ")
 
-        val updatedWords = currentState.selectedWords.map { word ->
-            if (word.isSelected) {
-                word.copy(isCorrect = currentState.correctAnswers.contains(word.text))
-            } else {
-                word
+        val selectedCorrectWords = mutableSetOf<String>()
+        val matchedPhraseWords = mutableSetOf<String>()
+
+        for (phrase in correctPhrases) {
+            val phraseWords = phrase.split(" ")
+
+            for (i in 0..(questionWords.size - phraseWords.size)) {
+                val window = questionWords.subList(i, i + phraseWords.size)
+                if (window == phraseWords && window.all { selectedWordSet.contains(it) }) {
+                    matchedPhraseWords.addAll(window)
+                }
             }
         }
-        val selectedAnswers = updatedWords.filter { it.isSelected }.map { it.text }.toSet()
-        val numCorrectSelected = selectedAnswers.count { correctAnswers.contains(it) }
-        val scoreIncrement = numCorrectSelected * 10
+
+        val updatedWords = currentState.selectedWords.map { word ->
+            if (matchedPhraseWords.contains(word.text)) {
+                word.copy(isCorrect = true)
+            } else {
+                word.copy(isCorrect = false)
+            }
+        }
+
+        val scoreIncrement = matchedPhraseWords.size * 10
 
         updateState(
             currentState.copy(
                 selectedWords = updatedWords,
-                score = currentState.score + scoreIncrement,
+                score = currentState.score + scoreIncrement
             )
         )
 
         timerManager.pauseTimer()
 
-        if (selectedAnswers == correctAnswers) {
-            viewModelScope.launch {
-                delay(1500L)
-                loadNextQuestion()
-                timerManager.resumeTimer()
-            }
-        } else {
-            hapticFeedbackManager.vibrate(200)
+        viewModelScope.launch {
+            delay(1500L)
+            loadNextQuestion()
+            timerManager.resumeTimer()
+        }
 
-            viewModelScope.launch {
-                delay(1500L)
-                loadNextQuestion()
-                timerManager.resumeTimer()
-            }
+        if (matchedPhraseWords.isEmpty()) {
+            hapticFeedbackManager.vibrate(200)
         }
     }
+
+
 
     override fun onPauseClicked() {
         super.onPauseClicked()
@@ -154,23 +169,29 @@ class KeywordsCheckViewModel @Inject constructor(
     }
 
     override fun toggleWordSelection(word: String) {
-        val updated = uiState.value.selectedWords.toMutableList()
+        val currentState = uiState.value
+        val updated = currentState.selectedWords.toMutableList()
         val exists = updated.indexOfFirst { it.text == word }
 
         if (exists >= 0) {
             updated.removeAt(exists)
         } else {
-            updated.add(
-                KeywordWord(
-                    text = word,
-                    isSelected = true
+            if (updated.size < currentState.maxSelectableWords) {
+                updated.add(
+                    KeywordWord(
+                        text = word,
+                        isSelected = true
+                    )
                 )
-            )
+            } else {
+                return
+            }
         }
 
-        updateState(uiState.value.copy(selectedWords = updated))
-        Log.d("KeywordsCheckEvent", "Selected Answers: " + uiState.value.selectedWords)
+        updateState(currentState.copy(selectedWords = updated))
+        Log.d("KeywordsCheckEvent", "Selected Answers: " + updated.joinToString { it.text })
     }
+
 
 
     private fun reset() {

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.gamecompletion.model.GameCompletionEvent
 import com.example.support.feature.gamecompletion.model.GameCompletionState
 import com.example.support.feature.gamecompletion.presentation.viewModel.GameCompletionController
@@ -37,16 +38,13 @@ fun GameCompletionScreen(
 
         is GameCompletionState.GameCompletionResult.Error -> {
             val errorMessage = (state.result as? GameCompletionState.GameCompletionResult.Error)?.message ?: "Unknown error"
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.onEvent(event = GameCompletionEvent.LoadGameState)
+                }
+            )
         }
 
         else -> {

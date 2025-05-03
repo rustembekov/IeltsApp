@@ -75,14 +75,22 @@ class SynonymsViewModel @Inject constructor(
     }
 
     override fun toggleSelection(index: Int) {
-        val updatedOptions = uiState.value.options.mapIndexed { i, option ->
+        val currentOptions = uiState.value.options
+        val selectedCount = currentOptions.count { it.isSelected }
+
+        val updatedOptions = currentOptions.mapIndexed { i, option ->
             if (i == index && option.isCorrect == null) {
-                option.copy(isSelected = !option.isSelected)
+                if (!option.isSelected && selectedCount >= 3) {
+                    option
+                } else {
+                    option.copy(isSelected = !option.isSelected)
+                }
             } else option
         }
 
         updateState(uiState.value.copy(options = updatedOptions))
     }
+
 
     private fun checkAnswer() {
         val currentState = uiState.value

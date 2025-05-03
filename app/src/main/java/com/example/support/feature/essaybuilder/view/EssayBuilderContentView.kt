@@ -128,7 +128,21 @@ private fun EssayBuilderContentViewPreview() {
             EssayBuilderState.Part.Blank(1),
             EssayBuilderState.Part.Text(".")
         ),
-        currentBlanks = listOf(null, null) // Two blanks, initially empty
+        currentBlanks = listOf(null, null),
+        options = listOf(
+            EssayBuilderState.OptionUiModel(
+                word = "test1"
+            ),
+            EssayBuilderState.OptionUiModel(
+                word = "test2",
+                isSelected = true
+            ),
+            EssayBuilderState.OptionUiModel(
+                word = "test3",
+                isSelected = true,
+                isUsed = true
+            )
+        )
     )
 
     val mockController = object : EssayBuilderController {

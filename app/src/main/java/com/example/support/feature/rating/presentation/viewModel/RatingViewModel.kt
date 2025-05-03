@@ -7,6 +7,7 @@ import com.example.support.feature.rating.presentation.repository.RatingReposito
 import com.example.support.core.util.ResultCore
 import com.example.support.feature.rating.model.RatingResult
 import com.example.support.feature.rating.model.RatingState
+import com.example.support.feature.rating.presentation.usecase.FetchAvatarsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RatingViewModel @Inject constructor(
-    private val ratingRepository: RatingRepository
+    private val ratingRepository: RatingRepository,
+    private val fetchAvatarsUseCase: FetchAvatarsUseCase
 ) : BaseViewModel<RatingState, RatingResult>(RatingState()), RatingController {
 
     init {
@@ -36,27 +38,29 @@ class RatingViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = ratingRepository.getUsersByRating()) {
                 is ResultCore.Success -> {
+                    val users = result.data
+                    val avatarMap = fetchAvatarsUseCase.execute(users.take(10)) // lazy load more later
+
                     updateState(
                         RatingState(
-                            players = result.data,
+                            players = users,
+                            avatars = avatarMap,
                             result = RatingResult.Success
                         )
                     )
-                    Log.d("RatingViewModel", "Updated rankingList with ${result.data.size} users")
+
+                    launch {
+                        fetchAvatarsUseCase.execute(users.drop(10))
+                    }
+
                 }
 
                 is ResultCore.Failure -> {
-                    updateState(
-                        RatingState(
-                            result = RatingResult.Error(result.message)
-                        )
-                    )
-                    Log.e("RatingViewModel", "Failed to load users: ${result.message}")
+                    updateState(RatingState(result = RatingResult.Error(result.message)))
                 }
             }
         }
     }
-
 
     override fun onEvent(event: RatingResult) {
         TODO("Not yet implemented")

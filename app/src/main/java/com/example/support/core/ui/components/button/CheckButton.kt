@@ -46,7 +46,6 @@ fun CheckButton(
         ) {
             Icon(
                 modifier = modifier
-                    .padding(bottom = 3.dp)
                     .size(24.dp),
                 tint = AppTheme.colors.buttonGameBackground,
                 imageVector = Icons.Outlined.Check,
@@ -55,7 +54,7 @@ fun CheckButton(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.check),
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = AppTheme.colors.buttonGameBackground)
         }
 

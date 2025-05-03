@@ -100,6 +100,8 @@ dependencies {
 
     ksp ("com.google.dagger:hilt-compiler:2.51.1")
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg) // use latest if available
+
 
 
 }

@@ -1,6 +1,5 @@
 package com.example.support.core.ui.components.textField
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.height
@@ -12,7 +11,6 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -20,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.support.core.ui.AppTheme
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.support.core.ui.AppTheme.colors
 
 
 @Composable
@@ -37,12 +36,14 @@ fun AuthTextField(
 
     val secondaryColor = AppTheme.colors.authTextFieldSecondary
     val backgroundColor = AppTheme.colors.authTextFieldBackground
-    val activeColor = AppTheme.colors.authTextFieldPrimary
+    val activeColor = colors.authContentPrimary
 
     val currentColor = when {
         isFocused -> activeColor
+        value.isNotEmpty() -> activeColor
         else -> secondaryColor
     }
+
 
     OutlinedTextField(
         value = value,
@@ -52,7 +53,7 @@ fun AuthTextField(
             Text(
                 text = placeholder,
                 color = currentColor,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.bodyMedium
             )
         },
         leadingIcon = {
@@ -63,27 +64,27 @@ fun AuthTextField(
                 modifier = Modifier.size(15.dp)
             )
         },
-        textStyle = MaterialTheme.typography.displaySmall,
+        textStyle = MaterialTheme.typography.bodyMedium,
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        shape = RoundedCornerShape(50.dp),
         modifier = modifier
             .height(50.dp)
-            .width(300.dp)
-            .clip(RoundedCornerShape(50.dp))
-            .background(color = backgroundColor),
+            .width(300.dp),
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = AppTheme.colors.authTextFieldBackground,
-            unfocusedContainerColor = AppTheme.colors.authTextFieldBackground,
+            focusedContainerColor = backgroundColor,
+            unfocusedContainerColor = backgroundColor,
             focusedTextColor = currentColor,
             unfocusedTextColor = currentColor,
             focusedLeadingIconColor = currentColor,
             unfocusedLeadingIconColor = currentColor,
-            focusedPlaceholderColor = currentColor,
-            unfocusedPlaceholderColor = currentColor,
+            focusedPlaceholderColor = secondaryColor,
+            unfocusedPlaceholderColor = secondaryColor,
             focusedIndicatorColor = activeColor,
             unfocusedIndicatorColor = secondaryColor,
             cursorColor = activeColor
         )
     )
+
 }
 
 

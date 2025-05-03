@@ -10,27 +10,36 @@ import com.example.support.R
 
 // Set of Material typography styles to start with
 val AppTypography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.helvetica_neue_bold, FontWeight.Bold)),
-        fontWeight = FontWeight.Bold,
+    titleLarge = TextStyle(
+        fontFamily = FontFamily(Font(R.font.roboto_bold, FontWeight.Bold)),
         fontSize = 32.sp,
         letterSpacing = 0.sp
     ),
-    bodyMedium = TextStyle(
-        fontFamily = FontFamily(Font(R.font.helvetica_neue_bold, FontWeight.Bold)),
+
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily(Font(R.font.roboto_bold, FontWeight.Bold)),
         fontWeight = FontWeight.Bold,
         fontSize = 24.sp,
     ),
-    bodySmall = TextStyle(
-        fontFamily = FontFamily(Font(R.font.helvetica_neue_bold, FontWeight.Bold)),
+
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily(Font(R.font.roboto_bold, FontWeight.Bold)),
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
     ),
+
+    bodySmall = TextStyle(
+        fontFamily = FontFamily(Font(R.font.roboto_bold, FontWeight.Bold)),
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+    ),
+
     displayMedium = TextStyle(
         fontFamily = FontFamily(Font(R.font.protest_strike_regular, FontWeight.Normal)),
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp
     ),
+
     displaySmall = TextStyle(
         fontFamily = FontFamily(Font(R.font.helvetica_neue_roman, FontWeight.Normal)),
         fontWeight = FontWeight.Normal,
@@ -40,12 +49,6 @@ val AppTypography = Typography(
         fontFamily = FontFamily(Font(R.font.helvetica_neue_roman, FontWeight.Normal)),
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp
-    ),
-    titleLarge = TextStyle(
-        fontFamily = FontFamily(Font(R.font.protest_strike_regular, FontWeight.Normal)),
-        fontWeight = FontWeight.Normal,
-        fontSize = 36.sp,
-        letterSpacing = 0.sp
     ),
     titleSmall = TextStyle(
         fontFamily = FontFamily(Font(R.font.protest_strike_regular, FontWeight.Normal)),

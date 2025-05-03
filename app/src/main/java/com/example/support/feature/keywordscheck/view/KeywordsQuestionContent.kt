@@ -75,9 +75,9 @@ private fun KeywordsQuestionCard(
                     val selected = selectedWordsMap[cleaned]
 
                     val bgColor = when {
-                        selected?.isCorrect == true -> Color(0xFFB9F6CA)
-                        selected?.isCorrect == false -> Color(0xFFFF8A80)
-                        selected?.isSelected == true -> Color.Gray
+                        selected?.isCorrect == true -> AppTheme.colors.synonymCorrectBackground
+                        selected?.isCorrect == false ->  AppTheme.colors.synonymIncorrectBackground
+                        selected?.isSelected == true -> AppTheme.colors.synonymSelectedBackground
                         else -> Color.Transparent
                     }
 
@@ -86,9 +86,11 @@ private fun KeywordsQuestionCard(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .background(bgColor)
-                            .clickable { controller.toggleWordSelection(cleaned) }
+                            .clickable(enabled = selected != null || state.selectedWords.size < state.maxSelectableWords) {
+                                controller.toggleWordSelection(cleaned)
+                            }
                             .padding(horizontal = 6.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.displaySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }

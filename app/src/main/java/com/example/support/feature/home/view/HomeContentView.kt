@@ -50,7 +50,7 @@ fun HomeContentView(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            HeaderText()
+//            HeaderText()
             ProfileCard(state = state, controller = controller)
 
             StatsCard(
@@ -139,7 +139,7 @@ private fun GameSectionHeader(controller: HomeController) {
         ) {
             Text(
                 text = stringResource(R.string.see_more),
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Icon(
@@ -190,6 +190,7 @@ private fun HomeContentViewPreview() {
             controller = mockController,
             state = HomeState(
                 user = User(
+                    username = "Irina",
                     email = "testing@gmail.com",
                     rank = 23,
                     score = 120

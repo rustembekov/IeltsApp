@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.R
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.domain.GameModel
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.seemore.model.SeeMoreResult
 import com.example.support.feature.seemore.model.SeeMoreState
 import com.example.support.feature.seemore.presentation.viewModel.SeeMoreController
@@ -31,16 +32,10 @@ fun SeeMoreScreen(
 
         is SeeMoreResult.Error -> {
             val errorMessage = state.result.message
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = { controller.loadGames() }
+            )
         }
 
         else -> {

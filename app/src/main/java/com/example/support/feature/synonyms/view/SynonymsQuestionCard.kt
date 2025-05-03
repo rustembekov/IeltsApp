@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.support.core.ui.AppTheme
@@ -32,15 +31,18 @@ fun SynonymsQuestionCard(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier.padding(16.dp)
+        modifier = modifier
+            .padding(16.dp)
+
     ) {
         itemsIndexed(state.options) { index, option ->
             val backgroundColor = when {
-                option.isCorrect == true -> Color(0xFFB9F6CA) // green
-                option.isCorrect == false -> Color(0xFFFF8A80) // red
-                option.isSelected -> Color(0xFFE0E0E0) // light gray when selected
-                else -> MaterialTheme.colorScheme.surfaceVariant
+                option.isCorrect == true -> AppTheme.colors.synonymCorrectBackground
+                option.isCorrect == false -> AppTheme.colors.synonymIncorrectBackground
+                option.isSelected -> AppTheme.colors.synonymSelectedBackground
+                else -> AppTheme.colors.synonymDefaultBackground
             }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -54,7 +56,7 @@ fun SynonymsQuestionCard(
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = option.text,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary)
             }
         }

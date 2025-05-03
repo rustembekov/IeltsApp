@@ -36,6 +36,11 @@ object LightComponentColors {
     val CardGameContainerBackground = Color(0xFF898FEC)
     val PodiumRankGameBackground = Color(0xFFE0DEE1)
     val ButtonGameBackground = Color(0xFFE6D8F8)
+
+    val SynonymCorrectBackground = Color(0xFF4CAF50)
+    val SynonymIncorrectBackground = Color(0xFFF44336)
+    val SynonymSelectedBackground = Color(0xFF3F51B5)
+    val SynonymDefaultBackground = Color(0x97F0F0F0)
 }
 
 // Component-specific colors for dark theme
@@ -85,7 +90,12 @@ data class AppColors(
 
     val cardGameContainerBackground: Color,
     val podiumRankGameBackground: Color,
-    val buttonGameBackground: Color
+    val buttonGameBackground: Color,
+
+    val synonymCorrectBackground: Color,
+    val synonymIncorrectBackground: Color,
+    val synonymSelectedBackground: Color,
+    val synonymDefaultBackground: Color
 )
 
 
@@ -130,7 +140,13 @@ val LightAppColors = AppColors(
 
     cardGameContainerBackground = LightComponentColors.CardGameContainerBackground,
     podiumRankGameBackground = LightComponentColors.PodiumRankGameBackground,
-    buttonGameBackground = LightComponentColors.ButtonGameBackground
+    buttonGameBackground = LightComponentColors.ButtonGameBackground,
+
+    synonymCorrectBackground = LightComponentColors.SynonymCorrectBackground,
+    synonymIncorrectBackground = LightComponentColors.SynonymIncorrectBackground,
+    synonymSelectedBackground = LightComponentColors.SynonymSelectedBackground,
+    synonymDefaultBackground = LightComponentColors.SynonymDefaultBackground
+
 )
 
 
@@ -175,5 +191,11 @@ val DarkAppColors = AppColors(
 
     cardGameContainerBackground = LightComponentColors.CardGameContainerBackground,
     podiumRankGameBackground = LightComponentColors.PodiumRankGameBackground,
-    buttonGameBackground = LightComponentColors.ButtonGameBackground
+    buttonGameBackground = LightComponentColors.ButtonGameBackground,
+
+    synonymCorrectBackground = LightComponentColors.SynonymCorrectBackground,
+    synonymIncorrectBackground = LightComponentColors.SynonymIncorrectBackground,
+    synonymSelectedBackground = LightComponentColors.SynonymSelectedBackground,
+    synonymDefaultBackground = LightComponentColors.SynonymDefaultBackground
+
 )

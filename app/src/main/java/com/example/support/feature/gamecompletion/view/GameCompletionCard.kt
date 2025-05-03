@@ -1,11 +1,7 @@
 package com.example.support.feature.gamecompletion.view
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,7 +43,6 @@ fun GameCompletionCard(
     val animatedScore = remember { mutableIntStateOf(state.previousScore) }
     val animatedRank = remember { mutableIntStateOf(state.previousRank) }
 
-    // Animate score count up
     LaunchedEffect(state.newScore) {
         for (i in state.previousScore..state.newScore) {
             animatedScore.intValue = i
@@ -131,7 +126,7 @@ private fun RankItemAnimated(
             Text(
                 text = label,
                 color = labelColor,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodyMedium
             )
 
             val animatedScale by animateFloatAsState(

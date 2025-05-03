@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
 import com.example.support.feature.essaybuilder.presentation.viewModel.EssayBuilderController
@@ -37,16 +38,12 @@ fun EssayBuilderScreen(
         is EssayBuilderState.EssayBuilderResult.Error -> {
             val errorMessage =
                 (state.result as? EssayBuilderState.EssayBuilderResult.Error)?.message ?: "Unknown error"
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.onEvent(event = EssayBuilderEvent.StartGame)
+                }
+            )
         }
 
         else -> {

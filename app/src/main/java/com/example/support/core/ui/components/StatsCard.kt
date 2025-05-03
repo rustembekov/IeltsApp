@@ -70,7 +70,7 @@ fun StatsCard(
                     Text(
                         text = stringResource(R.string.ranking),
                         color = AppTheme.colors.homeTextPrimary,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         text = ranking,
@@ -102,7 +102,7 @@ fun StatsCard(
                     Text(
                         text = stringResource(R.string.points),
                         color = AppTheme.colors.homeTextPrimary,
-                        style = MaterialTheme.typography.bodySmall
+                        style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
                         text = points,

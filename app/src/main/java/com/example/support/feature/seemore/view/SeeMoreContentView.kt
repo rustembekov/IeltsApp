@@ -9,7 +9,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -20,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.example.support.R
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.ui.AppTheme.colors
-import com.example.support.core.ui.views.CustomBackgroundContainer
 import com.example.support.core.domain.GameModel
 import com.example.support.feature.seemore.model.SeeMoreState
 import com.example.support.feature.seemore.presentation.viewModel.SeeMoreController
@@ -37,7 +35,7 @@ fun SeeMoreContentView(
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        colors.backgroundGradientFirst.copy(0.6f),
+                        colors.backgroundGradientFirst,
                         colors.backgroundGradientSecond
                     )
                 )
@@ -46,19 +44,15 @@ fun SeeMoreContentView(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CustomBackgroundContainer(
-                modifierWhole = modifier
-                    .fillMaxHeight(0.1f)
-                    .clip(RoundedCornerShape(
-                        50.dp
-                    )),
-                modifierContent = modifier.padding(8.dp),
-
-                ) {
-                HeaderContent(controller = controller)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
+            HeaderContent(controller = controller)
+            HorizontalDivider(
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            
 
             GamesList(
                 state = state,
@@ -74,14 +68,13 @@ private fun HeaderContent(
 ) {
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .fillMaxWidth(),
     ) {
         OutlinedButton(
             onClick = { controller.onNavigateBack() },
             shape = RoundedCornerShape(20.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = AppTheme.colors.primary
+                contentColor = colors.primary
             ),
             border = ButtonDefaults.outlinedButtonBorder.copy(
                 brush = Brush.horizontalGradient(
@@ -116,7 +109,6 @@ private fun GamesList(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
     ) {
         items(state.games.chunked(2)) { rowGames ->
             Row(

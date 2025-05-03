@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.rating.model.RatingResult
 import com.example.support.feature.rating.model.RatingState
 import com.example.support.feature.rating.presentation.viewModel.RatingController
@@ -29,16 +30,9 @@ fun RatingScreen(
 
         state.result is RatingResult.Error -> {
             val errorMessage = state.result.message
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = {controller.loadUsers()})
         }
 
         else -> {
@@ -66,7 +60,9 @@ private fun RatingScreenPreview() {
         darkTheme = false
     ) {
         RatingScreen(
-            state = RatingState(),
+            state = RatingState(
+                result = RatingResult.Success
+            ),
             controller = mockController
         )
     }

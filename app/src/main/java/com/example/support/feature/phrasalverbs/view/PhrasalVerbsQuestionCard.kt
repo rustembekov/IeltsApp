@@ -61,7 +61,6 @@ fun PhrasalVerbsQuestionCard(
         ) {
             val questionParts = state.currentQuestion.split("________")
 
-            // Use FlowRow for proper text wrapping behavior
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start,
@@ -71,7 +70,7 @@ fun PhrasalVerbsQuestionCard(
                 if (questionParts.isNotEmpty()) {
                     Text(
                         text = questionParts[0],
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = Color.White
                     )
                 }
@@ -88,7 +87,7 @@ fun PhrasalVerbsQuestionCard(
                 if (questionParts.size > 1) {
                     Text(
                         text = questionParts[1],
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = Color.White
                     )
                 }
@@ -121,7 +120,7 @@ private fun ExpandingUnderlineTextField(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
-        textStyle = MaterialTheme.typography.bodySmall.copy(color = Color.White),
+        textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.White),
         cursorBrush = SolidColor(Color.White),
         modifier = Modifier
             .width(animatedWidth)

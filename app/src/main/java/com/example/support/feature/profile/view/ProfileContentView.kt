@@ -3,6 +3,8 @@ package com.example.support.feature.profile.view
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,11 +55,12 @@ fun ProfileContentView(
                 ranking = state.user?.rank.toString(),
                 points = state.user?.score.toString()
             )
-            Column(
+            LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                state.settingsList.forEach { profileSettings ->
+                items(state.settingsList) { profileSettings ->
                     ProfileCardSettings(
                         icon = profileSettings.icon,
                         settingsName = stringResource(profileSettings.name),
@@ -84,6 +87,10 @@ private fun ProfileContentViewPreview() {
         }
 
         override fun onImagePicked(uri: Uri) {
+            TODO("Not yet implemented")
+        }
+
+        override fun loadUser() {
             TODO("Not yet implemented")
         }
 

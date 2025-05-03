@@ -63,7 +63,7 @@ fun HomeCardGameView(
             ) {
                 Text(
                     text = nameGame,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
 
@@ -82,7 +82,7 @@ fun HomeCardGameView(
                         gameDescription?.let {
                             Text(
                                 text = it,
-                                style = MaterialTheme.typography.displaySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }

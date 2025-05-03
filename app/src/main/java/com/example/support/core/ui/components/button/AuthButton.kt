@@ -33,7 +33,7 @@ fun AuthButton(
         Text(
             text = text,
             color = AppTheme.colors.authButtonPrimary,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 

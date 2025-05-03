@@ -1,7 +1,6 @@
 package com.example.support.feature.essaybuilder.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -12,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,9 +30,9 @@ fun DraggableWord(
     }
 
     val backgroundColor = if (option.isUsed) {
-        MaterialTheme.colorScheme.surfaceVariant
+        AppTheme.colors.synonymSelectedBackground.copy(0.4f)
     } else {
-        MaterialTheme.colorScheme.primary
+        AppTheme.colors.synonymSelectedBackground
     }
 
     Box(
@@ -50,8 +48,8 @@ fun DraggableWord(
     ) {
         Text(
             text = option.word,
-            color = if (option.isUsed) Color.Gray else MaterialTheme.colorScheme.onPrimaryContainer,
-            style = MaterialTheme.typography.bodySmall
+            color = if (option.isUsed) AppTheme.colors.homeItemPrimary.copy(alpha = 0.4f) else AppTheme.colors.homeItemPrimary,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
@@ -65,6 +63,22 @@ private fun DraggableWordPreview() {
             option = EssayBuilderState.OptionUiModel(
                 word = "Test word",
                 isSelected = false,
+                isUsed = false
+            ),
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun DraggableWordUsedPreview() {
+    AppTheme {
+        DraggableWord(
+            option = EssayBuilderState.OptionUiModel(
+                word = "Test word",
+                isSelected = false,
+                isUsed = true
             ),
             onClick = {}
         )
