@@ -1,4 +1,6 @@
 package com.example.support.core.di
+import android.content.Context
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.data.UserRepository
 import com.example.support.feature.essaybuilder.presentation.repository.EssayBuilderGameRepository
 import com.example.support.feature.factopinion.presentation.repository.FactOpinionGameRepository
@@ -6,14 +8,18 @@ import com.example.support.feature.gamecompletion.presentation.repository.GameCo
 import com.example.support.feature.gamecompletion.presentation.repository.GameCompletionRepositoryImpl
 import com.example.support.feature.keywordscheck.presentation.repository.KeywordsCheckGameRepository
 import com.example.support.feature.phrasalverbs.presentation.repository.PhrasalVerbsGameRepository
+import com.example.support.feature.rating.presentation.repository.AvatarRepository
+import com.example.support.feature.rating.presentation.repository.AvatarRepositoryImpl
 import com.example.support.feature.synonyms.presentation.repository.SynonymsGameRepository
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -69,8 +75,13 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideGameCompletionRepository(database: DatabaseReference): GameCompletionRepository {
-        return GameCompletionRepositoryImpl(database)
+    fun provideGameCompletionRepository(database: DatabaseReference, gamePreferences: GamePreferences): GameCompletionRepository {
+        return GameCompletionRepositoryImpl(database, gamePreferences)
     }
+
+    @Provides
+    fun provideAvatarRepository(
+        @ApplicationContext context: Context
+    ): AvatarRepository = AvatarRepositoryImpl(context)
 
 }

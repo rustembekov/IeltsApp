@@ -94,7 +94,7 @@ fun PhrasalVerbsContentView(
             CongratulationsView()
         }
 
-        if (state.isPauseDialogVisible) {
+        if (state.isPaused) {
             (controller as? BaseGameViewModel<*, *>)?.let {
                 PauseDialog(
                     onQuit = {

@@ -45,7 +45,6 @@ fun PauseButton(
         ) {
             Icon(
                 modifier = modifier
-                    .padding(bottom = 3.dp)
                     .size(24.dp),
                 tint = AppTheme.colors.buttonGameBackground,
                 painter = painterResource(R.drawable.ic_pause),
@@ -54,7 +53,7 @@ fun PauseButton(
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = stringResource(R.string.pause),
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = AppTheme.colors.buttonGameBackground)
         }
 

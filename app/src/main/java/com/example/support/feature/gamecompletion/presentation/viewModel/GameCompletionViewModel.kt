@@ -26,14 +26,25 @@ class GameCompletionViewModel @Inject constructor(
             }
 
             is GameCompletionEvent.NewGame -> {
-                viewModelScope.launch {
-                    navigator.navigate(NavigationEvent.Back)
-                }
+                restartGame()
             }
             is GameCompletionEvent.QuitGame -> {
                 viewModelScope.launch {
                     navigator.navigate(NavigationEvent.Navigate(NavigationItem.Home.route))
                 }
+            }
+        }
+    }
+
+    private fun restartGame() {
+        viewModelScope.launch {
+            val previousGameRoute = gameManager.getPreviousGameRoute()
+
+
+            if (!previousGameRoute.isNullOrEmpty()) {
+                navigator.navigate(NavigationEvent.Navigate(previousGameRoute))
+            } else {
+                navigator.navigate(NavigationEvent.Back)
             }
         }
     }

@@ -4,18 +4,27 @@ import com.example.support.core.ui.views.pauseDialog.model.PauseState
 import com.example.support.core.util.Constants
 
 data class KeywordsCheckState(
+    override val isPaused: Boolean = false,
+    override val timer: Int = Constants.GAME_TIMER_DURATION,
+    override val hasStarted: Boolean = false,
+    override val score: Int = 0,
     val currentQuestion: String = "",
     val correctAnswers: List<String> = emptyList(),
-    val score: Int = 0,
     val selectedWords: List<KeywordWord> = emptyList(),
-    val timer: Int = Constants.GAME_TIMER_DURATION,
-    val hasStarted: Boolean = false,
     val result: KeywordsCheckResult = KeywordsCheckResult.Loading,
+    val maxSelectableWords: Int = 0,
     val keywordsCheckEvent: KeywordsCheckEvent? = null,
-    override val isPauseDialogVisible: Boolean = false
 ): PauseState {
-    override fun copyPauseState(isPauseDialogVisible: Boolean): KeywordsCheckState {
-        return copy(isPauseDialogVisible = isPauseDialogVisible)
+    override fun copyPauseState(isPaused: Boolean): PauseState {
+        return this.copy(isPaused = isPaused)
+    }
+
+    override fun copyWithTimer(timer: Int): PauseState {
+        return this.copy(timer = timer)
+    }
+
+    override fun copyWithGameStarted(hasStarted: Boolean): PauseState {
+        return this.copy(hasStarted = hasStarted)
     }
 }
 

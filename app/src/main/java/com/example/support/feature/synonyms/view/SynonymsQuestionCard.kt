@@ -1,5 +1,6 @@
 package com.example.support.feature.synonyms.view
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.support.core.ui.AppTheme
@@ -32,15 +34,17 @@ fun SynonymsQuestionCard(
         columns = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = modifier.padding(16.dp)
+        modifier = modifier
+            .padding(16.dp)
     ) {
         itemsIndexed(state.options) { index, option ->
             val backgroundColor = when {
-                option.isCorrect == true -> Color(0xFFB9F6CA) // green
-                option.isCorrect == false -> Color(0xFFFF8A80) // red
-                option.isSelected -> Color(0xFFE0E0E0) // light gray when selected
-                else -> MaterialTheme.colorScheme.surfaceVariant
+                option.isCorrect == true -> AppTheme.colors.synonymCorrectBackground
+                option.isCorrect == false -> AppTheme.colors.synonymIncorrectBackground
+                option.isSelected -> AppTheme.colors.synonymSelectedBackground
+                else -> AppTheme.colors.synonymDefaultBackground
             }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,9 +57,13 @@ fun SynonymsQuestionCard(
                     .padding(horizontal = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = option.text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary)
+                Text(
+                    text = option.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
@@ -72,7 +80,7 @@ private fun SynonymsQuestionCardPreview() {
     val options = listOf(
         SynonymOption("Happy"),
         SynonymOption("Joyful"),
-        SynonymOption("Angry"),
+        SynonymOption("Angry, Terrifying, Horrible"),
         SynonymOption("Glad"),
         SynonymOption("Sad"),
         SynonymOption("Content")

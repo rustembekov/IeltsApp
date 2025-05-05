@@ -4,19 +4,27 @@ import com.example.support.core.ui.views.pauseDialog.model.PauseState
 import com.example.support.core.util.Constants
 
 data class SynonymsState(
+    override val isPaused: Boolean = false,
+    override val timer: Int = Constants.GAME_TIMER_DURATION,
+    override val hasStarted: Boolean = false,
+    override val score: Int = 0,
     val category: String = "",
-    val timer: Int = Constants.GAME_TIMER_DURATION,
     val mainWord: String = "",
-    val hasStarted: Boolean = false,
-    val score: Int = 0,
     val selectedCount: Int = 0,
     val options: List<SynonymOption> = emptyList(),
     val correctAnswers: List<String> = emptyList(),
     val result: SynonymsResult = SynonymsResult.Success,
-    override val isPauseDialogVisible: Boolean = false
 ): PauseState {
-    override fun copyPauseState(isPauseDialogVisible: Boolean): SynonymsState {
-        return copy(isPauseDialogVisible = isPauseDialogVisible)
+    override fun copyPauseState(isPaused: Boolean): PauseState {
+        return this.copy(isPaused = isPaused)
+    }
+
+    override fun copyWithTimer(timer: Int): PauseState {
+        return this.copy(timer = timer)
+    }
+
+    override fun copyWithGameStarted(hasStarted: Boolean): PauseState {
+        return this.copy(hasStarted = hasStarted)
     }
 }
 

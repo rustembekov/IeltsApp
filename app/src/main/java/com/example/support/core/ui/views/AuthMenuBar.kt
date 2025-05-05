@@ -38,8 +38,12 @@ fun AuthMenuBar(
                         colors.backgroundGradientSecond.copy(alpha = 0.5f)
                     )
                 )
+                , shape =
+                    RoundedCornerShape(
+                        bottomEnd = 50.dp,
+                        bottomStart = 50.dp
+                    )
             )
-            .clip(RoundedCornerShape(50.dp))
     ) {
         Box(
             modifier = Modifier

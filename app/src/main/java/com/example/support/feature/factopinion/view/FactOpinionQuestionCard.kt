@@ -51,7 +51,7 @@ fun FactOpinionQuestionCard(
         ) {
             Text(
                 text = state.currentQuestion,
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
             Row(
@@ -96,7 +96,7 @@ private fun FactOrOpinionButton(
     ) {
         Text(
             text = buttonText,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
@@ -116,7 +116,9 @@ private fun QuestionCardPreview() {
     }
     AppTheme {
         FactOpinionQuestionCard(
-            state = FactOpinionState(),
+            state = FactOpinionState(
+                currentQuestion = "Question Test"
+            ),
             controller = mockController
         )
     }

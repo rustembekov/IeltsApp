@@ -2,11 +2,11 @@ package com.example.support.feature.register.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.support.core.data.UserManager
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationItem
 import com.example.support.core.util.ResultCore
-import com.example.support.core.data.UserRepository
 import com.example.support.feature.register.model.RegisterScreenEvent
 import com.example.support.feature.register.model.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
     private val navigator: Navigator,
-    private val userRepository: UserRepository
+    private val userRepository: UserManager
 ) : ViewModel(), RegisterController {
 
     private val _state = MutableStateFlow(RegisterState())

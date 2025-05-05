@@ -4,18 +4,26 @@ import com.example.support.core.ui.views.pauseDialog.model.PauseState
 import com.example.support.core.util.Constants
 
 data class FactOpinionState(
-    val score: Int = 0,
+    override val isPaused: Boolean = false,
+    override val timer: Int = Constants.GAME_TIMER_DURATION,
+    override val hasStarted: Boolean = false,
+    override val score: Int = 0,
     val currentQuestion: String = "",
     val answer: String = "",
     val selectedAnswer: String = "",
-    val timer: Int = Constants.GAME_TIMER_DURATION,
     val result: FactOpinionResult? = null,
-    val hasStarted: Boolean = false,
     val isShownCorrectAnswer: Boolean = false,
-    override val isPauseDialogVisible: Boolean = false
 ) : PauseState {
-    override fun copyPauseState(isPauseDialogVisible: Boolean): FactOpinionState {
-        return copy(isPauseDialogVisible = isPauseDialogVisible)
+    override fun copyPauseState(isPaused: Boolean): PauseState {
+        return this.copy(isPaused = isPaused)
+    }
+
+    override fun copyWithTimer(timer: Int): PauseState {
+        return this.copy(timer = timer)
+    }
+
+    override fun copyWithGameStarted(hasStarted: Boolean): PauseState {
+        return this.copy(hasStarted = hasStarted)
     }
 }
 

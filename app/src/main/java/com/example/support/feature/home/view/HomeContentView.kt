@@ -50,8 +50,8 @@ fun HomeContentView(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            HeaderText()
-            ProfileCard(state = state, controller = controller)
+//            HeaderText()
+            HomeProfileCard(state = state, controller = controller)
 
             StatsCard(
                 ranking = state.user?.rank.toString(),
@@ -139,7 +139,7 @@ private fun GameSectionHeader(controller: HomeController) {
         ) {
             Text(
                 text = stringResource(R.string.see_more),
-                style = MaterialTheme.typography.displaySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             Icon(
@@ -157,21 +157,21 @@ private val mockGames = listOf(
         id = "1",
         title = "Fact or Opinion",
         description = "Test your knowledge",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = NavigationItem.FactOpinion.route
     ),
     GameModel(
         id = "2",
         title = "Phrasal Verb",
         description = "Challenge yourself",
-        imgResource = R.drawable.img_game_person2,
+        imgResource = R.drawable.img_fact_opinion,
         route = NavigationItem.PhrasalVerbs.route
     ),
     GameModel(
         id = "3",
         title = "Third Game",
         description = "Improve your skills",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = NavigationItem.KeywordsCheck.route
     )
 )
@@ -190,6 +190,7 @@ private fun HomeContentViewPreview() {
             controller = mockController,
             state = HomeState(
                 user = User(
+                    username = "Irina",
                     email = "testing@gmail.com",
                     rank = 23,
                     score = 120

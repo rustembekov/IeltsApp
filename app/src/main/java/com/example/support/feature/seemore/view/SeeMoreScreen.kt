@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.R
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.domain.GameModel
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.seemore.model.SeeMoreResult
 import com.example.support.feature.seemore.model.SeeMoreState
 import com.example.support.feature.seemore.presentation.viewModel.SeeMoreController
@@ -31,16 +32,10 @@ fun SeeMoreScreen(
 
         is SeeMoreResult.Error -> {
             val errorMessage = state.result.message
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = { controller.loadGames() }
+            )
         }
 
         else -> {
@@ -59,21 +54,21 @@ private val mockGames = listOf(
         id = "1",
         title = "Fact or Opinion",
         description = "Test your knowledge",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = com.example.support.core.navigation.model.NavigationItem.FactOpinion.route
     ),
     GameModel(
         id = "2",
         title = "Phrasal Verb",
         description = "Challenge yourself",
-        imgResource = R.drawable.img_game_person2,
+        imgResource = R.drawable.img_fact_opinion,
         route = com.example.support.core.navigation.model.NavigationItem.PhrasalVerbs.route
     ),
     GameModel(
         id = "3",
         title = "Third Game",
         description = "Improve your skills",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = com.example.support.core.navigation.model.NavigationItem.KeywordsCheck.route
     )
 )

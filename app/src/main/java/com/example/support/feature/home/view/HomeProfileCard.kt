@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +42,7 @@ import com.example.support.feature.home.model.HomeState
 import com.example.support.feature.home.viewModel.HomeController
 
 @Composable
-fun ProfileCard(
+fun HomeProfileCard(
     state: HomeState,
     controller: HomeController
 ) {
@@ -121,7 +122,7 @@ fun ProfileCard(
 
             Text(
                 text = "${state.user?.username}",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
             )
 
@@ -135,18 +136,25 @@ fun ProfileCard(
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.homeItemBackground)
             ) {
-                Icon(
-                    modifier = Modifier.size(20.4.dp),
-                    painter = painterResource(R.drawable.ic_user_edit),
-                    contentDescription = "Edit",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.edit_profile),
-                    style = MaterialTheme.typography.displaySmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.4.dp),
+                        painter = painterResource(R.drawable.ic_user_edit),
+                        contentDescription = "Edit",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = stringResource(R.string.edit_profile),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
             }
         }
     }
@@ -155,7 +163,7 @@ fun ProfileCard(
 
 @Composable
 @Preview(showBackground = false)
-private fun ProfileCardPreview() {
+private fun HomeProfileCardPreview() {
     val mockController = object : HomeController {
         override fun onNavigateToRoute(route: String) {
             TODO("Not yet implemented")
@@ -168,7 +176,7 @@ private fun ProfileCardPreview() {
 
     }
     AppTheme {
-        ProfileCard(
+        HomeProfileCard(
             state = HomeState(
                 user = User(
                     email = "testing@gmail.com",

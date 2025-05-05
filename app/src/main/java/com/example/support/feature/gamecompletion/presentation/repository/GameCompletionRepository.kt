@@ -1,9 +1,10 @@
 package com.example.support.feature.gamecompletion.presentation.repository
 
 import android.util.Log
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.util.ResultCore
 import com.example.support.core.domain.User
-import com.example.support.feature.gamecompletion.presentation.domain.GameResultDelta
+import com.example.support.feature.gamecompletion.presentation.domain.GameCompletionData
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -11,14 +12,19 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface GameCompletionRepository {
-    suspend fun processGameResult(userId: String, newScore: Int): ResultCore<GameResultDelta>
+    suspend fun processGameResult(userId: String, newScore: Int): ResultCore<GameCompletionData>
+    fun getPreviousGameRoute(): String
 }
 
 class GameCompletionRepositoryImpl @Inject constructor(
-    private val database: DatabaseReference
+    private val database: DatabaseReference,
+    private val gamePreferences: GamePreferences
 ) : GameCompletionRepository {
 
-    override suspend fun processGameResult(userId: String, newScore: Int): ResultCore<GameResultDelta> =
+    override suspend fun processGameResult(
+        userId: String,
+        newScore: Int
+    ): ResultCore<GameCompletionData> =
         withContext(Dispatchers.IO) {
             try {
                 // 1. Get current user
@@ -54,7 +60,7 @@ class GameCompletionRepositoryImpl @Inject constructor(
                 val newRank = users.indexOfFirst { it.id == userId } + 1
 
                 ResultCore.Success(
-                    GameResultDelta(
+                    GameCompletionData(
                         previousScore = previousScore,
                         previousRank = previousRank,
                         newScore = updatedScore,
@@ -67,4 +73,6 @@ class GameCompletionRepositoryImpl @Inject constructor(
                 ResultCore.Failure(e.message ?: "Unknown error")
             }
         }
+
+    override fun getPreviousGameRoute(): String = gamePreferences.getLastPlayedGame()
 }

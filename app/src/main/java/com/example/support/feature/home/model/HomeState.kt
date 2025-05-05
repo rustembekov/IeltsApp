@@ -7,7 +7,7 @@ import com.example.support.core.domain.User
 data class HomeState(
     val games: List<GameModel> = emptyList(),
     val user: User? = null,
-    val result: HomeResult? = null,
+    val result: HomeResult = HomeResult.Loading,
     val selectedImageUri: Uri? = null
 )
 

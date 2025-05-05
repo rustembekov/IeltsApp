@@ -2,12 +2,12 @@ package com.example.support.feature.home.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseViewModel
+import com.example.support.core.data.UserManager
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.util.AvatarManager
 import com.example.support.core.util.ResultCore
 import com.example.support.feature.seemore.presentation.repository.AllGameRepository
-import com.example.support.core.data.UserRepository
 import com.example.support.feature.home.model.HomeEvent
 import com.example.support.feature.home.model.HomeResult
 import com.example.support.feature.home.model.HomeState
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val navigator: Navigator,
     private val allGameRepository: AllGameRepository,
-    private val userRepository: UserRepository,
+    private val userRepository: UserManager,
     private val avatarManager: AvatarManager
 
 ) : BaseViewModel<HomeState, HomeEvent>(HomeState()), HomeController {
@@ -54,19 +54,21 @@ class HomeViewModel @Inject constructor(
         userRepository.getCurrentUser { result ->
             when (result) {
                 is ResultCore.Success -> {
+                    val selectedAvatar = avatarManager.getAvatarUri()
                     val latestState = uiState.value
+
                     updateState(
                         latestState.copy(
                             user = result.data,
+                            selectedImageUri = selectedAvatar,
                             result = HomeResult.Success
                         )
                     )
                 }
 
                 is ResultCore.Failure -> {
-                    val latestState = uiState.value
                     updateState(
-                        latestState.copy(
+                        uiState.value.copy(
                             result = HomeResult.Error(result.message)
                         )
                     )
@@ -74,8 +76,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-
 
     private fun loadGames() {
         updateState(HomeState(result = HomeResult.Loading))

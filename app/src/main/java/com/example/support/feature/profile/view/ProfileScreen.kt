@@ -8,6 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.profile.model.ProfileEvent
 import com.example.support.feature.profile.model.ProfileResult
 import com.example.support.feature.profile.model.ProfileState
@@ -20,6 +21,11 @@ fun ProfileScreen(
     controller: ProfileController,
     state: ProfileState
 ) {
+    LaunchedEffect(Unit) {
+        controller.loadUser()
+    }
+    ProfileImagePicker(state = state, onImagePicked = controller::onImagePicked)
+
     when (state.result) {
         is ProfileResult.Loading -> {
             Box(
@@ -32,16 +38,12 @@ fun ProfileScreen(
 
         is ProfileResult.Error -> {
             val errorMessage = state.result.message
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.loadUser()
+                }
+            )
         }
 
         else -> {
@@ -68,6 +70,10 @@ private fun ProfileScreenPreview() {
         }
 
         override fun onImagePicked(uri: Uri) {
+            TODO("Not yet implemented")
+        }
+
+        override fun loadUser() {
             TODO("Not yet implemented")
         }
 

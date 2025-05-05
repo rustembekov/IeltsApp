@@ -47,7 +47,9 @@
     <string name="opinion">Opinion</string>
 
     <string name="paused">Paused</string>
+    <string name="try_again">Try Again</string>
 
+    <string name="leaderboard">Leaderboard</string>
 
 
 </resources>

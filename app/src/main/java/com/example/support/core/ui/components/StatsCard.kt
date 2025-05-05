@@ -3,8 +3,10 @@ package com.example.support.core.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -41,77 +43,82 @@ fun StatsCard(
         shape = RoundedCornerShape(30.dp),
         colors = CardDefaults.cardColors(containerColor = AppTheme.colors.homeItemPrimary)
     ) {
-        Row(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
                         listOf(
                             AppTheme.colors.backgroundGradientFirst,
                             AppTheme.colors.backgroundGradientSecond.copy(alpha = 0.5f)
                         )
-                    )
+                    ),
+                    shape = RoundedCornerShape(30.dp)
                 )
-                .padding(16.dp)
-                ,
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
         ) {
-            Row(modifier = Modifier
-                .padding(5.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_ranking),
-                    contentDescription = "Ranking",
-                    modifier = Modifier.size(60.dp),
-
-                )
-                Column(modifier = Modifier.padding(start = 16.dp)) {
-                    Text(
-                        text = stringResource(R.string.ranking),
-                        color = AppTheme.colors.homeTextPrimary,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                    Text(
-                        text = ranking,
-                        color = Color(0xffF5BA46),
-                        style = MaterialTheme.typography.displayMedium
-                    )
-                }
-            }
-
-            VerticalDivider(
-                modifier = Modifier
-                    .height(51.5.dp)
-                    .width(2.dp),
-                color = Color.LightGray
-            )
-
             Row(
                 modifier = Modifier
-                    .padding(5.dp),
+                    .fillMaxWidth(),
+
+                horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_points),
-                    contentDescription = "Points",
-                    modifier = Modifier.size(60.dp),
-                    tint = Color(0xffF5BA46)
+                Row(modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_ranking),
+                        contentDescription = "Ranking",
+                        modifier = Modifier.size(54.dp),)
+                    Column(modifier = Modifier) {
+                        Text(
+                            text = stringResource(R.string.ranking),
+                            color = AppTheme.colors.homeTextPrimary,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = ranking,
+                            color = Color(0xffF5BA46),
+                            style = MaterialTheme.typography.displayMedium
+                        )
+                    }
+                }
+
+                VerticalDivider(
+                    modifier = Modifier
+                        .height(51.5.dp)
+                        .width(2.dp),
+                    color = Color.LightGray
                 )
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(
-                        text = stringResource(R.string.points),
-                        color = AppTheme.colors.homeTextPrimary,
-                        style = MaterialTheme.typography.bodySmall
+
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_points),
+                        contentDescription = "Points",
+                        modifier = Modifier.size(54.dp)
                     )
-                    Text(
-                        text = points,
-                        color = Color(0xffF5BA46),
-                        style = MaterialTheme.typography.displayMedium
-                    )
+                    Column {
+                        Text(
+                            text = stringResource(R.string.points),
+                            color = AppTheme.colors.homeTextPrimary,
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = points,
+                            color = Color(0xffF5BA46),
+                            style = MaterialTheme.typography.displayMedium
+                        )
+                    }
                 }
             }
         }
+
     }
 }
 

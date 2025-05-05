@@ -3,61 +3,45 @@ package com.example.support.feature.phrasalverbs.presentation.viewModel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
 import com.example.support.core.util.Constants
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
-import com.example.support.core.util.TimerManager
-import com.example.support.feature.factopinion.model.FactOpinionResult
-import com.example.support.feature.factopinion.model.FactOpinionState
+import com.example.support.core.util.timer.GameTimerController
+import com.example.support.core.util.timer.TimerManager
 import com.example.support.feature.phrasalverbs.model.PhrasalVerbsEventEvent
 import com.example.support.feature.phrasalverbs.model.PhrasalVerbsResult
 import com.example.support.feature.phrasalverbs.model.PhrasalVerbsState
 import com.example.support.feature.phrasalverbs.presentation.repository.PhrasalVerbsGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class PhrasalVerbsViewModel @Inject constructor(
     navigator: Navigator,
+    timerManager: TimerManager,
+    gameTimerController: GameTimerController,
     private val gameManager: PhrasalVerbsGameManager,
-    private val timerManager: TimerManager,
+    private val gamePreferences: GamePreferences,
     private val vibrationManager: HapticFeedbackManager
-
-) : BaseGameViewModel<PhrasalVerbsState, PhrasalVerbsEventEvent>(PhrasalVerbsState(), navigator),
-    PhrasalVerbsController {
-    init {
-        timerManager.timerFlow
-            .onEach { time ->
-                time?.let {
-                    updateState(uiState.value.copy(timer = it))
-
-                    if (it == 0 && uiState.value.hasStarted) {
-                        val score = uiState.value.score
-                        gameManager.saveScore(score)
-                        navigator.navigate(NavigationEvent.Navigate(NavigationItem.GameCompletion.route))
-                        delay(300)
-                        reset()
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
+) : BaseGameViewModel<PhrasalVerbsState, PhrasalVerbsEventEvent>(
+    PhrasalVerbsState(),
+    navigator,
+    timerManager,
+    gameTimerController
+), PhrasalVerbsController {
 
     override fun onEvent(event: PhrasalVerbsEventEvent) {
         when (event) {
             is PhrasalVerbsEventEvent.StartGame -> {
-                if (!uiState.value.hasStarted) {
-                    updateState(uiState.value.copy(hasStarted = true))
-                    startGame()
-                    timerManager.startTimer(viewModelScope, Constants.GAME_TIMER_DURATION)
-                }
+                startGame()
             }
 
             is PhrasalVerbsEventEvent.Answer -> {
@@ -66,7 +50,7 @@ class PhrasalVerbsViewModel @Inject constructor(
         }
     }
 
-    private fun startGame() {
+    override fun initializeGame() {
         updateState(uiState.value.copy(result = PhrasalVerbsResult.Loading))
         viewModelScope.launch {
             when (val init = gameManager.loadShuffledIdsIfNeeded()) {
@@ -74,7 +58,6 @@ class PhrasalVerbsViewModel @Inject constructor(
                     updateState(uiState.value.copy(result = PhrasalVerbsResult.Error(init.message)))
                     return@launch
                 }
-
                 is ResultCore.Success -> loadNextQuestion()
             }
         }
@@ -92,7 +75,7 @@ class PhrasalVerbsViewModel @Inject constructor(
                             userInput = ""
                         )
                     )
-                    Log.d("PhrasalVerbsViewModel", "Answer: ${uiState.value.answer}")
+                    Timber.tag("PhrasalVerbsViewModel").d("Answer: %s", uiState.value.answer)
                 }
 
                 is ResultCore.Failure -> {
@@ -134,25 +117,25 @@ class PhrasalVerbsViewModel @Inject constructor(
             )
         )
     }
-    override fun onPauseClicked() {
-        super.onPauseClicked()
-        timerManager.pauseTimer()
+
+    override fun getGameManager(): GameManager = gameManager
+
+    override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.PHRASAL_VERBS_GAME)
+        viewModelScope.launch {
+            navigator.navigate(NavigationEvent.Navigate(
+                NavigationItem.GameCompletion.route
+            ))
+            delay(300)
+            resetGame()
+        }
     }
 
-    override fun onResumePauseDialog() {
-        super.onResumePauseDialog()
-        timerManager.resumeTimer()
-    }
-    override fun onCleared() {
-        super.onCleared()
-        timerManager.stopTimer()
-    }
+    override fun getCurrentScore(): Int = uiState.value.score
 
-    private fun reset() {
-        timerManager.resetTimer(viewModelScope)
-        gameManager.reset()
-        updateState(
-            PhrasalVerbsState()
-        )
-    }
+    override fun isGameStarted(): Boolean = uiState.value.hasStarted
+
+    override fun createInitialState(): PhrasalVerbsState = PhrasalVerbsState()
+
 }

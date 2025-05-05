@@ -10,10 +10,10 @@ import javax.inject.Inject
 class UserRepository @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val database: DatabaseReference
-) {
+): UserManager {
 
     ///Firebase Auth
-    fun register(
+    override fun register(
         email: String,
         password: String,
         username: String,
@@ -38,7 +38,7 @@ class UserRepository @Inject constructor(
             }
     }
 
-    fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
+    override fun login(email: String, password: String, callback: (Boolean, String) -> Unit) {
         firebaseAuth
             .signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -70,7 +70,7 @@ class UserRepository @Inject constructor(
             }
     }
 
-    fun getCurrentUser(callback: (ResultCore<User>) -> Unit) {
+    override fun getCurrentUser(callback: (ResultCore<User>) -> Unit) {
         val userId = firebaseAuth.currentUser?.uid
         if (userId == null) {
             callback(ResultCore.Failure("User not authenticated"))
@@ -92,12 +92,12 @@ class UserRepository @Inject constructor(
 
     }
 
-    fun getUserId(): String? {
+    override fun getCurrentUserId(): String? {
         return firebaseAuth.currentUser?.uid
     }
 
 
-    fun logout() {
+    override fun logout() {
         firebaseAuth.signOut()
     }
 

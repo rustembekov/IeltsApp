@@ -26,6 +26,8 @@ import com.example.support.R
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.ui.AppTheme.colors as ColorApp
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun HomeCardGameView(
@@ -56,16 +58,20 @@ fun HomeCardGameView(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(16.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = nameGame,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+
 
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -82,7 +88,7 @@ fun HomeCardGameView(
                         gameDescription?.let {
                             Text(
                                 text = it,
-                                style = MaterialTheme.typography.displaySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.primary
                             )
                         }
@@ -99,8 +105,8 @@ private fun CardGameViewPreview() {
     AppTheme(darkTheme = false) {
         HomeCardGameView(
             onClick = {},
-            nameGame = "Fact or Opinion",
-            gameImgResource = R.drawable.img_game_person
+            nameGame = "Choose Keywords",
+            gameImgResource = R.drawable.img_keywords_check
         )
     }
 }

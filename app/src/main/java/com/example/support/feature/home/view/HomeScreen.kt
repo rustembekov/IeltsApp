@@ -1,14 +1,17 @@
 package com.example.support.feature.home.view
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.domain.GameModel
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.home.model.HomeEvent
 import com.example.support.feature.home.model.HomeResult
 import com.example.support.feature.home.model.HomeState
@@ -18,16 +21,30 @@ import com.example.support.feature.home.viewModel.HomeController
 fun HomeScreen(
     modifier: Modifier = Modifier,
     controller: HomeController,
-    state: HomeState?
+    state: HomeState
 ) {
     LaunchedEffect(Unit) {
-        controller.onEvent(HomeEvent.RefreshAvatar)
         controller.onEvent(HomeEvent.LoadGames)
-        controller.onEvent(HomeEvent.LoadUser)
     }
-    Log.d("HomeScreen", "User data: " + state?.user.toString())
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(Unit) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                controller.onEvent(HomeEvent.LoadUser)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     when {
-        state == null || state.result is HomeResult.Loading -> {
+        state.user == null && state.result is HomeResult.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -37,17 +54,14 @@ fun HomeScreen(
         }
 
         state.result is HomeResult.Error -> {
-            val errorMessage = (state.result as? HomeResult.Error)?.message ?: "Unknown error"
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            val errorMessage = (state.result as? HomeResult.Error)?.message ?: "Something went wrong"
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.onEvent(HomeEvent.LoadGames)
+                    controller.onEvent(HomeEvent.LoadUser)
+                }
+            )
         }
 
         else -> {
@@ -59,6 +73,7 @@ fun HomeScreen(
         }
     }
 }
+
 
 private val mockGames =  listOf(
     GameModel(

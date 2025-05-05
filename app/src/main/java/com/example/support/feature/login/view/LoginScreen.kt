@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -112,25 +113,24 @@ private fun LoginContent(
             )
 
     ) {
-        AuthMenuBar()
+        AuthMenuBar(
+            modifier = Modifier.offset(y = (-30).dp)
+        )
 
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 120.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 120.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                LoginForm(state, controller)
-                LoginFooter(
-                    onNavigateTo = {
-                        navHostController.navigate(NavigationItem.Register.route)
-                    }
-                )
-            }
+            LoginForm(state, controller)
+            LoginFooter(
+                onNavigateTo = {
+                    navHostController.navigate(NavigationItem.Register.route)
+                }
+            )
         }
     }
 }
@@ -142,7 +142,7 @@ private fun LoginForm(
 ) {
     Box(
         modifier = Modifier
-            .height(400.dp)
+            .height(350.dp)
             .width(340.dp)
             .clip(RoundedCornerShape(30.dp))
             .background(
@@ -174,7 +174,7 @@ private fun LoginForm(
             AuthButton(
                 onClick = { controller.onEvent(LoginEvent.Login) },
                 text = stringResource(R.string.login),
-                modifier = Modifier.padding(top = 60.dp)
+                modifier = Modifier.padding(top = 30.dp)
             )
 
         }
@@ -202,13 +202,13 @@ private fun LoginFooter(onNavigateTo: () -> Unit) {
         Text(
             text = stringResource(R.string.no_account_login),
             color = ColorApp.authButtonPrimary,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
         )
         Spacer(modifier = Modifier.padding(4.dp))
         Text(
             text = stringResource(R.string.sign_up),
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = ColorApp.authContentPrimary,
             modifier = Modifier
 

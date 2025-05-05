@@ -52,7 +52,7 @@ fun ProfileCardSettings(
         )
         Text(
             text = settingsName,
-            style = MaterialTheme.typography.bodySmall,
+            style = MaterialTheme.typography.bodyMedium,
             color = AppTheme.colors.primaryVariant
         )
     }

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.support.core.ui.AppTheme
+import com.example.support.core.ui.views.ErrorView
 import com.example.support.feature.keywordscheck.model.KeywordsCheckEvent
 import com.example.support.feature.keywordscheck.model.KeywordsCheckResult
 import com.example.support.feature.keywordscheck.model.KeywordsCheckState
@@ -39,16 +40,12 @@ fun KeywordsCheckScreen(
         is KeywordsCheckResult.Error -> {
             val errorMessage =
                 (state.result as? KeywordsCheckResult.Error)?.message ?: "Unknown error"
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+            ErrorView(
+                message = errorMessage,
+                onRetry = {
+                    controller.onEvent(KeywordsCheckEvent.StartGame)
+                }
+            )
         }
 
         else -> {
@@ -78,7 +75,9 @@ private fun KeywordsCheckScreenPreview() {
 
         }
         KeywordsCheckScreen(
-            state = KeywordsCheckState(),
+            state = KeywordsCheckState(
+                result = KeywordsCheckResult.Success
+            ),
             controller = mockController
         )
     }

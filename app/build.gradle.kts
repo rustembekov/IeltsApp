@@ -81,7 +81,7 @@ dependencies {
 
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
-
+    implementation(libs.timber)
     ksp(libs.room.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation (libs.kotlinx.serialization.json)
@@ -100,6 +100,8 @@ dependencies {
 
     ksp ("com.google.dagger:hilt-compiler:2.51.1")
     implementation(libs.coil.compose)
+    implementation(libs.coil.svg) // use latest if available
+
 
 
 }
