@@ -51,7 +51,7 @@ fun HomeContentView(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 //            HeaderText()
-            ProfileCard(state = state, controller = controller)
+            HomeProfileCard(state = state, controller = controller)
 
             StatsCard(
                 ranking = state.user?.rank.toString(),

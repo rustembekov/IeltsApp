@@ -10,6 +10,7 @@ data class EssayBuilderState(
     val correctAnswers: List<String> = emptyList(),
     val timer: Int = 30,
     val isAnswerChecked: Boolean = false,
+    val tokens: List<Token> = emptyList(), // Added tokens list
     val result: EssayBuilderResult? = null,
     val hasStarted: Boolean = false,
     val isShownCorrectAnswer: Boolean = false,
@@ -17,11 +18,18 @@ data class EssayBuilderState(
     val selectedWord: String? = null,
 
     override val isPauseDialogVisible: Boolean = false
-): PauseState{
+): PauseState {
     sealed class Part {
         data class Text(val text: String) : Part()
         data class Blank(val index: Int) : Part()
     }
+
+    data class Token(
+        val content: String = "",
+        val isBlank: Boolean = false,
+        val isSpace: Boolean = false,
+        val blankIndex: Int = -1
+    )
 
     data class OptionUiModel(
         val word: String,

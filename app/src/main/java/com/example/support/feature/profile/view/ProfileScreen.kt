@@ -24,6 +24,8 @@ fun ProfileScreen(
     LaunchedEffect(Unit) {
         controller.loadUser()
     }
+    ProfileImagePicker(state = state, onImagePicked = controller::onImagePicked)
+
     when (state.result) {
         is ProfileResult.Loading -> {
             Box(

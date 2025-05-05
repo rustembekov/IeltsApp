@@ -54,19 +54,21 @@ class HomeViewModel @Inject constructor(
         userRepository.getCurrentUser { result ->
             when (result) {
                 is ResultCore.Success -> {
+                    val selectedAvatar = avatarManager.getAvatarUri()
                     val latestState = uiState.value
+
                     updateState(
                         latestState.copy(
                             user = result.data,
+                            selectedImageUri = selectedAvatar,
                             result = HomeResult.Success
                         )
                     )
                 }
 
                 is ResultCore.Failure -> {
-                    val latestState = uiState.value
                     updateState(
-                        latestState.copy(
+                        uiState.value.copy(
                             result = HomeResult.Error(result.message)
                         )
                     )
@@ -74,6 +76,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
 
 
 

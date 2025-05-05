@@ -11,6 +11,7 @@ import com.example.support.core.util.TimerManager
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
 import com.example.support.feature.essaybuilder.model.EssayBuilderState.EssayBuilderResult
+import com.example.support.feature.essaybuilder.model.EssayBuilderState.Token
 import com.example.support.feature.essaybuilder.presentation.data.EssayBuilderGame
 import com.example.support.feature.essaybuilder.presentation.repository.EssayBuilderGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,7 +61,6 @@ class EssayBuilderViewModel @Inject constructor(
             is EssayBuilderEvent.AnswerQuestion -> {
                 checkAnswer()
             }
-
         }
     }
 
@@ -94,11 +94,15 @@ class EssayBuilderViewModel @Inject constructor(
 
                     val currentBlanks = List(game.correctAnswers.size) { null }
 
+                    // Process parts into tokens
+                    val tokens = processPartsIntoTokens(parts)
+
                     updateState(
                         uiState.value.copy(
                             questionParts = parts,
                             options = game.options.map { EssayBuilderState.OptionUiModel(word = it) },
                             currentBlanks = currentBlanks,
+                            tokens = tokens,
                             result = EssayBuilderResult.Success,
                             correctAnswers = game.correctAnswers
                         )
@@ -112,14 +116,55 @@ class EssayBuilderViewModel @Inject constructor(
         }
     }
 
+    private fun processPartsIntoTokens(parts: List<EssayBuilderState.Part>): List<Token> {
+        val tokens = mutableListOf<Token>()
+
+        // Process parts into tokens (words, spaces, and blanks)
+        parts.forEach { part ->
+            when (part) {
+                is EssayBuilderState.Part.Text -> {
+                    // Split text into words and spaces
+                    var remaining = part.text
+                    var lastWasSpace = false
+
+                    while (remaining.isNotEmpty()) {
+                        when {
+                            remaining.startsWith(" ") -> {
+                                tokens.add(Token(isSpace = true, content = " "))
+                                remaining = remaining.substring(1)
+                                lastWasSpace = true
+                            }
+                            else -> {
+                                // Find next space or end of string
+                                val nextSpaceIndex = remaining.indexOf(' ').let {
+                                    if (it == -1) remaining.length else it
+                                }
+                                val word = remaining.substring(0, nextSpaceIndex)
+                                tokens.add(Token(content = word))
+                                remaining = remaining.substring(nextSpaceIndex)
+                                lastWasSpace = false
+                            }
+                        }
+                    }
+                }
+                is EssayBuilderState.Part.Blank -> {
+                    tokens.add(Token(isBlank = true, blankIndex = part.index))
+                }
+            }
+        }
+
+        return tokens
+    }
+
     private fun checkAnswer() {
         val currentState = uiState.value
         val correctAnswers = currentState.correctAnswers.toSet()
 
+        // Update each blank to show if it's correct or incorrect
         val updatedBlanks = currentState.currentBlanks.map { blank ->
             blank?.copy(
                 isCorrect = correctAnswers.contains(blank.word),
-                isSelected = true
+                isSelected = true  // Mark as selected to show the correct/incorrect color
             )
         }
 
@@ -130,31 +175,35 @@ class EssayBuilderViewModel @Inject constructor(
 
         updateState(currentState.copy(
             currentBlanks = updatedBlanks,
-            score = currentState.score + scoreIncrement
+            score = currentState.score + scoreIncrement,
+            isAnswerChecked = true
         ))
 
         timerManager.pauseTimer()
 
-        if (selectedAnswers == correctAnswers) {
-            viewModelScope.launch {
-                delay(1500L)
-                loadNextQuestion()
-                timerManager.resumeTimer()
-            }
-        } else {
-            hapticFeedbackManager.vibrate(200)
+        // Delay before moving to next question
+        viewModelScope.launch {
+            delay(1500L)
 
-            viewModelScope.launch {
-                delay(1500L)
-                loadNextQuestion()
-                timerManager.resumeTimer()
-            }
+            // Reset state and load next question
+            loadNextQuestion()
+            timerManager.resumeTimer()
+            updateState(uiState.value.copy(isAnswerChecked = false))
+        }
+
+        // Give haptic feedback for incorrect answers
+        if (selectedAnswers != correctAnswers) {
+            hapticFeedbackManager.vibrate(200)
         }
     }
 
-
     override fun onWordClick(word: String) {
         val state = uiState.value
+
+        // If answers have been checked, ignore word clicks
+        if (state.isAnswerChecked) {
+            return
+        }
 
         val isSelected = state.selectedWord == word
         val newOptions = state.options.map {
@@ -172,14 +221,20 @@ class EssayBuilderViewModel @Inject constructor(
         )
     }
 
-
     override fun onBlankClick(index: Int) {
         val state = uiState.value
+
+        // If answers have been checked, ignore blank clicks
+        if (state.isAnswerChecked) {
+            return
+        }
+
         val selectedWord = state.selectedWord
         val currentBlanks = state.currentBlanks.toMutableList()
 
         val removed = currentBlanks[index]
         if (removed != null) {
+            // Remove word from blank
             val updatedOptions = state.options.map {
                 if (it.word == removed.word) it.copy(isUsed = false) else it
             }
@@ -192,8 +247,14 @@ class EssayBuilderViewModel @Inject constructor(
                 )
             )
         } else if (selectedWord != null) {
+            // Add selected word to blank
             if (state.options.any { it.word == selectedWord && !it.isUsed }) {
-                currentBlanks[index] = EssayBuilderState.BlanksUiModel(word = selectedWord)
+                // Create a new blank model with default state (not showing correct/incorrect yet)
+                currentBlanks[index] = EssayBuilderState.BlanksUiModel(
+                    word = selectedWord,
+                    isSelected = false,  // Not showing correct/incorrect color yet
+                    isCorrect = false    // Will be determined during checkAnswer
+                )
 
                 val updatedOptions = state.options.map {
                     if (it.word == selectedWord) it.copy(isUsed = true, isSelected = false) else it

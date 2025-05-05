@@ -42,7 +42,7 @@ import com.example.support.feature.home.model.HomeState
 import com.example.support.feature.home.viewModel.HomeController
 
 @Composable
-fun ProfileCard(
+fun HomeProfileCard(
     state: HomeState,
     controller: HomeController
 ) {
@@ -163,7 +163,7 @@ fun ProfileCard(
 
 @Composable
 @Preview(showBackground = false)
-private fun ProfileCardPreview() {
+private fun HomeProfileCardPreview() {
     val mockController = object : HomeController {
         override fun onNavigateToRoute(route: String) {
             TODO("Not yet implemented")
@@ -176,7 +176,7 @@ private fun ProfileCardPreview() {
 
     }
     AppTheme {
-        ProfileCard(
+        HomeProfileCard(
             state = HomeState(
                 user = User(
                     email = "testing@gmail.com",

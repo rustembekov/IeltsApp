@@ -26,7 +26,6 @@ fun ProfileContentView(
     controller: ProfileController,
     state: ProfileState
 ) {
-    ProfileImagePicker(state = state, onImagePicked = controller::onImagePicked)
 
     Box(
         modifier = modifier

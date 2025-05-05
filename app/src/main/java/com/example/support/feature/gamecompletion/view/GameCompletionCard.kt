@@ -2,6 +2,7 @@ package com.example.support.feature.gamecompletion.view
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -116,11 +117,10 @@ private fun RankItemAnimated(
         modifier = Modifier.padding(5.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
+        Image(
             painter = painterResource(id = icon),
             contentDescription = null,
             modifier = Modifier.size(60.dp),
-            tint = iconTint
         )
         Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
