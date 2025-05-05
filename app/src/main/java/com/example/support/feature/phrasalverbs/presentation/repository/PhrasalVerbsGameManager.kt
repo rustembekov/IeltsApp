@@ -1,19 +1,19 @@
 package com.example.support.feature.phrasalverbs.presentation.repository
 
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.GameResultManager
 import com.example.support.core.util.ResultCore
-import com.example.support.feature.keywordscheck.presentation.data.KeywordsCheckGame
 import com.example.support.feature.phrasalverbs.presentation.data.PhrasalVerbsGame
 import javax.inject.Inject
 
 class PhrasalVerbsGameManager @Inject constructor(
     private val repository: PhrasalVerbsGameRepository,
     private val resultManager: GameResultManager
-) {
+) : GameManager {
     private var shuffledIds = mutableListOf<String>()
     private var currentIndex = 0
 
-    suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
+    override suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
         if (shuffledIds.isEmpty()) {
             return when (val result = repository.getAllQuestionIds()) {
                 is ResultCore.Success -> {
@@ -21,13 +21,14 @@ class PhrasalVerbsGameManager @Inject constructor(
                     currentIndex = 0
                     ResultCore.Success(Unit)
                 }
+
                 is ResultCore.Failure -> result
             }
         }
         return ResultCore.Success(Unit)
     }
 
-    suspend fun getNextQuestion(): ResultCore<PhrasalVerbsGame> {
+    override suspend fun getNextQuestion(): ResultCore<PhrasalVerbsGame> {
         if (currentIndex >= shuffledIds.size) {
             return ResultCore.Failure("No more questions")
         }
@@ -35,11 +36,11 @@ class PhrasalVerbsGameManager @Inject constructor(
         return repository.getQuestionById(nextId)
     }
 
-    fun saveScore(score: Int) {
+    override fun saveScore(score: Int) {
         resultManager.saveResult(score)
     }
 
-    fun reset() {
+    override fun reset() {
         shuffledIds.clear()
         currentIndex = 0
     }

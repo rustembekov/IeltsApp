@@ -4,12 +4,11 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
 import com.example.support.core.navigation.Navigator
-import com.example.support.core.navigation.model.NavigationEvent
-import com.example.support.core.navigation.model.NavigationItem
-import com.example.support.core.util.Constants
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
-import com.example.support.core.util.TimerManager
+import com.example.support.core.util.timer.GameTimerController
+import com.example.support.core.util.timer.TimerManager
 import com.example.support.feature.keywordscheck.model.KeywordWord
 import com.example.support.feature.keywordscheck.model.KeywordsCheckEvent
 import com.example.support.feature.keywordscheck.model.KeywordsCheckResult
@@ -17,46 +16,26 @@ import com.example.support.feature.keywordscheck.model.KeywordsCheckState
 import com.example.support.feature.keywordscheck.presentation.repository.KeywordsCheckGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class KeywordsCheckViewModel @Inject constructor(
     navigator: Navigator,
-    private val timerManager: TimerManager,
-    private val hapticFeedbackManager: HapticFeedbackManager,
-    private val gameManager: KeywordsCheckGameManager
-) : BaseGameViewModel<KeywordsCheckState, KeywordsCheckEvent>(KeywordsCheckState(), navigator),
-    KeywordsCheckController {
-
-    init {
-        timerManager.timerFlow
-            .onEach { time ->
-                time?.let {
-                    updateState(uiState.value.copy(timer = it))
-
-                    if (it == 0 && uiState.value.hasStarted) {
-                        val score = uiState.value.score
-                        gameManager.saveScore(score)
-                        navigator.navigate(NavigationEvent.Navigate(NavigationItem.GameCompletion.route))
-                        delay(300)
-                        reset()
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
-
+    timerManager: TimerManager,
+    gameTimerController: GameTimerController,
+    private val gameManager: KeywordsCheckGameManager,
+    private val hapticFeedbackManager: HapticFeedbackManager
+) : BaseGameViewModel<KeywordsCheckState, KeywordsCheckEvent>(
+    KeywordsCheckState(),
+    navigator,
+    timerManager,
+    gameTimerController
+), KeywordsCheckController {
     override fun onEvent(event: KeywordsCheckEvent) {
         when (event) {
             is KeywordsCheckEvent.StartGame -> {
-                if (!uiState.value.hasStarted) {
-                    updateState(uiState.value.copy(hasStarted = true))
-                    startGame()
-                    timerManager.startTimer(viewModelScope, Constants.GAME_TIMER_DURATION)
-                }
+                startGame()
             }
 
             is KeywordsCheckEvent.AnswerQuestion -> {
@@ -65,18 +44,20 @@ class KeywordsCheckViewModel @Inject constructor(
         }
     }
 
-    private fun startGame() {
+    override fun initializeGame() {
+        updateState(uiState.value.copy(result = KeywordsCheckResult.Loading))
         viewModelScope.launch {
             when (val init = gameManager.loadShuffledIdsIfNeeded()) {
                 is ResultCore.Failure -> {
                     updateState(uiState.value.copy(result = KeywordsCheckResult.Error(init.message)))
                     return@launch
                 }
-
                 is ResultCore.Success -> loadNextQuestion()
             }
         }
     }
+
+    override fun getGameManager(): GameManager = gameManager
 
     private fun loadNextQuestion() {
         viewModelScope.launch {
@@ -112,7 +93,6 @@ class KeywordsCheckViewModel @Inject constructor(
             .replace(Regex("[.,;]"), "")
             .split(" ")
 
-        val selectedCorrectWords = mutableSetOf<String>()
         val matchedPhraseWords = mutableSetOf<String>()
 
         for (phrase in correctPhrases) {
@@ -156,16 +136,15 @@ class KeywordsCheckViewModel @Inject constructor(
         }
     }
 
-
-
-    override fun onPauseClicked() {
-        super.onPauseClicked()
-        timerManager.pauseTimer()
-    }
-
-    override fun onResumePauseDialog() {
-        super.onResumePauseDialog()
-        timerManager.resumeTimer()
+    override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        viewModelScope.launch {
+            navigator.navigate(com.example.support.core.navigation.model.NavigationEvent.Navigate(
+                com.example.support.core.navigation.model.NavigationItem.GameCompletion.route
+            ))
+            delay(300)
+            resetGame()
+        }
     }
 
     override fun toggleWordSelection(word: String) {
@@ -192,13 +171,9 @@ class KeywordsCheckViewModel @Inject constructor(
         Log.d("KeywordsCheckEvent", "Selected Answers: " + updated.joinToString { it.text })
     }
 
+    override fun getCurrentScore(): Int = uiState.value.score
 
+    override fun isGameStarted(): Boolean = uiState.value.hasStarted
 
-    private fun reset() {
-        timerManager.resetTimer(viewModelScope)
-        gameManager.reset()
-        updateState(
-            KeywordsCheckState()
-        )
-    }
+    override fun createInitialState(): KeywordsCheckState = KeywordsCheckState()
 }

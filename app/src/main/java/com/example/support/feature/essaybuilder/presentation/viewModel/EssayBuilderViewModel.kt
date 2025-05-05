@@ -3,11 +3,11 @@ package com.example.support.feature.essaybuilder.presentation.viewModel
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
 import com.example.support.core.navigation.Navigator
-import com.example.support.core.navigation.model.NavigationEvent
-import com.example.support.core.navigation.model.NavigationItem
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
-import com.example.support.core.util.TimerManager
+import com.example.support.core.util.timer.GameTimerController
+import com.example.support.core.util.timer.TimerManager
 import com.example.support.feature.essaybuilder.model.EssayBuilderEvent
 import com.example.support.feature.essaybuilder.model.EssayBuilderState
 import com.example.support.feature.essaybuilder.model.EssayBuilderState.EssayBuilderResult
@@ -16,55 +16,35 @@ import com.example.support.feature.essaybuilder.presentation.data.EssayBuilderGa
 import com.example.support.feature.essaybuilder.presentation.repository.EssayBuilderGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class EssayBuilderViewModel @Inject constructor(
     navigator: Navigator,
+    timerManager: TimerManager,
+    gameTimerController: GameTimerController,
     private val gameManager: EssayBuilderGameManager,
-    private val timerManager: TimerManager,
     private val hapticFeedbackManager: HapticFeedbackManager
-) : BaseGameViewModel<EssayBuilderState, EssayBuilderEvent>(EssayBuilderState(), navigator),
-    EssayBuilderController {
-
-    init {
-        timerManager.timerFlow
-            .onEach { time ->
-                time?.let {
-                    updateState(uiState.value.copy(timer = it))
-
-                    if (it == 0 && uiState.value.hasStarted) {
-                        val score = uiState.value.score
-                        gameManager.saveScore(score)
-                        navigator.navigate(NavigationEvent.Navigate(NavigationItem.GameCompletion.route))
-                        delay(300)
-                        reset()
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
+) : BaseGameViewModel<EssayBuilderState, EssayBuilderEvent>(
+    EssayBuilderState(),
+    navigator,
+    timerManager,
+    gameTimerController
+), EssayBuilderController {
 
     override fun onEvent(event: EssayBuilderEvent) {
         when (event) {
             is EssayBuilderEvent.StartGame -> {
-                if (!uiState.value.hasStarted) {
-                    updateState(uiState.value.copy(hasStarted = true))
-                    startGame()
-                    timerManager.startTimer(viewModelScope, uiState.value.timer)
-                }
+                startGame()
             }
-
             is EssayBuilderEvent.AnswerQuestion -> {
                 checkAnswer()
             }
         }
     }
 
-    private fun startGame() {
+    override fun initializeGame() {
         updateState(uiState.value.copy(result = EssayBuilderResult.Loading))
         viewModelScope.launch {
             when (val init = gameManager.loadShuffledIdsIfNeeded()) {
@@ -72,11 +52,12 @@ class EssayBuilderViewModel @Inject constructor(
                     updateState(uiState.value.copy(result = EssayBuilderResult.Error(init.message)))
                     return@launch
                 }
-
                 is ResultCore.Success -> loadNextQuestion()
             }
         }
     }
+
+    override fun getGameManager(): GameManager = gameManager
 
     private fun loadNextQuestion() {
         viewModelScope.launch {
@@ -93,8 +74,6 @@ class EssayBuilderViewModel @Inject constructor(
                     }
 
                     val currentBlanks = List(game.correctAnswers.size) { null }
-
-                    // Process parts into tokens
                     val tokens = processPartsIntoTokens(parts)
 
                     updateState(
@@ -119,11 +98,9 @@ class EssayBuilderViewModel @Inject constructor(
     private fun processPartsIntoTokens(parts: List<EssayBuilderState.Part>): List<Token> {
         val tokens = mutableListOf<Token>()
 
-        // Process parts into tokens (words, spaces, and blanks)
         parts.forEach { part ->
             when (part) {
                 is EssayBuilderState.Part.Text -> {
-                    // Split text into words and spaces
                     var remaining = part.text
                     var lastWasSpace = false
 
@@ -135,7 +112,6 @@ class EssayBuilderViewModel @Inject constructor(
                                 lastWasSpace = true
                             }
                             else -> {
-                                // Find next space or end of string
                                 val nextSpaceIndex = remaining.indexOf(' ').let {
                                     if (it == -1) remaining.length else it
                                 }
@@ -160,11 +136,10 @@ class EssayBuilderViewModel @Inject constructor(
         val currentState = uiState.value
         val correctAnswers = currentState.correctAnswers.toSet()
 
-        // Update each blank to show if it's correct or incorrect
         val updatedBlanks = currentState.currentBlanks.map { blank ->
             blank?.copy(
                 isCorrect = correctAnswers.contains(blank.word),
-                isSelected = true  // Mark as selected to show the correct/incorrect color
+                isSelected = true
             )
         }
 
@@ -179,19 +154,12 @@ class EssayBuilderViewModel @Inject constructor(
             isAnswerChecked = true
         ))
 
-        timerManager.pauseTimer()
-
-        // Delay before moving to next question
         viewModelScope.launch {
             delay(1500L)
-
-            // Reset state and load next question
             loadNextQuestion()
-            timerManager.resumeTimer()
             updateState(uiState.value.copy(isAnswerChecked = false))
         }
 
-        // Give haptic feedback for incorrect answers
         if (selectedAnswers != correctAnswers) {
             hapticFeedbackManager.vibrate(200)
         }
@@ -200,7 +168,6 @@ class EssayBuilderViewModel @Inject constructor(
     override fun onWordClick(word: String) {
         val state = uiState.value
 
-        // If answers have been checked, ignore word clicks
         if (state.isAnswerChecked) {
             return
         }
@@ -224,7 +191,6 @@ class EssayBuilderViewModel @Inject constructor(
     override fun onBlankClick(index: Int) {
         val state = uiState.value
 
-        // If answers have been checked, ignore blank clicks
         if (state.isAnswerChecked) {
             return
         }
@@ -234,7 +200,6 @@ class EssayBuilderViewModel @Inject constructor(
 
         val removed = currentBlanks[index]
         if (removed != null) {
-            // Remove word from blank
             val updatedOptions = state.options.map {
                 if (it.word == removed.word) it.copy(isUsed = false) else it
             }
@@ -247,13 +212,11 @@ class EssayBuilderViewModel @Inject constructor(
                 )
             )
         } else if (selectedWord != null) {
-            // Add selected word to blank
             if (state.options.any { it.word == selectedWord && !it.isUsed }) {
-                // Create a new blank model with default state (not showing correct/incorrect yet)
                 currentBlanks[index] = EssayBuilderState.BlanksUiModel(
                     word = selectedWord,
-                    isSelected = false,  // Not showing correct/incorrect color yet
-                    isCorrect = false    // Will be determined during checkAnswer
+                    isSelected = false,
+                    isCorrect = false
                 )
 
                 val updatedOptions = state.options.map {
@@ -271,26 +234,20 @@ class EssayBuilderViewModel @Inject constructor(
         }
     }
 
-    override fun onPauseClicked() {
-        super.onPauseClicked()
-        timerManager.pauseTimer()
+    override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        viewModelScope.launch {
+            navigator.navigate(com.example.support.core.navigation.model.NavigationEvent.Navigate(
+                com.example.support.core.navigation.model.NavigationItem.GameCompletion.route
+            ))
+            delay(300)
+            resetGame()
+        }
     }
 
-    override fun onResumePauseDialog() {
-        super.onResumePauseDialog()
-        timerManager.resumeTimer()
-    }
+    override fun getCurrentScore(): Int = uiState.value.score
 
-    override fun onCleared() {
-        super.onCleared()
-        timerManager.stopTimer()
-    }
+    override fun isGameStarted(): Boolean = uiState.value.hasStarted
 
-    private fun reset() {
-        timerManager.resetTimer(viewModelScope)
-        gameManager.reset()
-        updateState(
-            EssayBuilderState()
-        )
-    }
+    override fun createInitialState(): EssayBuilderState = EssayBuilderState()
 }

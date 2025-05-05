@@ -1,13 +1,23 @@
 package com.example.support.core.ui.views.pauseDialog.model
 
 interface PauseState {
-    val isPauseDialogVisible: Boolean
+    val isPaused: Boolean
+    val timer: Int
+    val hasStarted: Boolean
+    val score: Int
 
-    fun copyPauseState(isPauseDialogVisible: Boolean): PauseState
-}
+    /**
+     * Updates the pause state
+     */
+    fun copyPauseState(isPaused: Boolean): PauseState
 
+    /**
+     * Updates the timer value
+     */
+    fun copyWithTimer(timer: Int): PauseState
 
-interface PauseController {
-    fun onPauseClicked()
-    fun onDismissPauseDialog()
+    /**
+     * Updates the game started state
+     */
+    fun copyWithGameStarted(hasStarted: Boolean): PauseState
 }

@@ -77,9 +77,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-
-
     private fun loadGames() {
         updateState(HomeState(result = HomeResult.Loading))
 

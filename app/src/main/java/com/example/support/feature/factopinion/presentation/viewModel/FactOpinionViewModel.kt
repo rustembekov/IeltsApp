@@ -5,18 +5,17 @@ import com.example.support.core.BaseGameViewModel
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
-import com.example.support.core.util.Constants
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
-import com.example.support.core.util.TimerManager
+import com.example.support.core.util.timer.GameTimerController
+import com.example.support.core.util.timer.TimerManager
 import com.example.support.feature.factopinion.model.FactOpinionEvent
 import com.example.support.feature.factopinion.model.FactOpinionResult
 import com.example.support.feature.factopinion.model.FactOpinionState
 import com.example.support.feature.factopinion.presentation.repository.FactOpinionGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,41 +23,37 @@ import javax.inject.Inject
 class FactOpinionViewModel @Inject constructor(
     navigator: Navigator,
     private val gameManager: FactOpinionGameManager,
-    private val timerManager: TimerManager,
+    timerManager: TimerManager,
+    gameTimerController: GameTimerController,
     private val vibrationManager: HapticFeedbackManager
-) : BaseGameViewModel<FactOpinionState, FactOpinionEvent>(FactOpinionState(), navigator),
-    FactOpinionController {
-
-    init {
-        timerManager.timerFlow
-            .onEach { time ->
-                time?.let {
-                    updateState(uiState.value.copy(timer = it))
-
-                    if (it == 0 && uiState.value.hasStarted) {
-                        val score = uiState.value.score
-                        gameManager.saveScore(score)
-                        navigator.navigate(NavigationEvent.Navigate(NavigationItem.GameCompletion.route))
-                        delay(300)
-                        reset()
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
+) : BaseGameViewModel<FactOpinionState, FactOpinionEvent>(
+    FactOpinionState(),
+    navigator,
+    timerManager,
+    gameTimerController
+), FactOpinionController {
 
     override fun onEvent(event: FactOpinionEvent) {
         when (event) {
             is FactOpinionEvent.StartGame -> {
-                if (!uiState.value.hasStarted) {
-                    updateState(uiState.value.copy(hasStarted = true))
-                    startGame()
-                    timerManager.startTimer(viewModelScope, Constants.GAME_TIMER_DURATION)
-                }
+                startGame()
             }
 
             is FactOpinionEvent.AnswerQuestion -> {
                 checkAnswer()
+            }
+        }
+    }
+
+    override fun initializeGame() {
+        updateState(uiState.value.copy(result = FactOpinionResult.Loading))
+        viewModelScope.launch {
+            when (val init = gameManager.loadShuffledIdsIfNeeded()) {
+                is ResultCore.Failure -> {
+                    updateState(uiState.value.copy(result = FactOpinionResult.Error(init.message)))
+                    return@launch
+                }
+                is ResultCore.Success -> loadNextQuestion()
             }
         }
     }
@@ -71,29 +66,7 @@ class FactOpinionViewModel @Inject constructor(
         )
     }
 
-    override fun onPauseClicked() {
-        super.onPauseClicked()
-        timerManager.pauseTimer()
-    }
-
-    override fun onResumePauseDialog() {
-        super.onResumePauseDialog()
-        timerManager.resumeTimer()
-    }
-
-    private fun startGame() {
-        updateState(uiState.value.copy(result = FactOpinionResult.Loading))
-        viewModelScope.launch {
-            when (val init = gameManager.loadShuffledIdsIfNeeded()) {
-                is ResultCore.Failure -> {
-                    updateState(uiState.value.copy(result = FactOpinionResult.Error(init.message)))
-                    return@launch
-                }
-
-                is ResultCore.Success -> loadNextQuestion()
-            }
-        }
-    }
+    override fun getGameManager(): GameManager = gameManager
 
     private fun loadNextQuestion() {
         viewModelScope.launch {
@@ -141,16 +114,20 @@ class FactOpinionViewModel @Inject constructor(
         timerManager.resumeTimer()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        timerManager.stopTimer()
+    override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        viewModelScope.launch {
+            navigator.navigate(NavigationEvent.Navigate(
+                NavigationItem.GameCompletion.route
+            ))
+            delay(300)
+            resetGame()
+        }
     }
 
-    private fun reset() {
-        timerManager.resetTimer(viewModelScope)
-        gameManager.reset()
-        updateState(
-            FactOpinionState()
-        )
-    }
+    override fun getCurrentScore(): Int = uiState.value.score
+
+    override fun isGameStarted(): Boolean = uiState.value.hasStarted
+
+    override fun createInitialState(): FactOpinionState = FactOpinionState()
 }

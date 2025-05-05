@@ -1,5 +1,6 @@
 package com.example.support.feature.synonyms.presentation.repository
 
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.GameResultManager
 import com.example.support.core.util.ResultCore
 import com.example.support.feature.synonyms.presentation.data.SynonymsGame
@@ -8,15 +9,15 @@ import javax.inject.Inject
 class SynonymsGameManager @Inject constructor(
     private val repository: SynonymsGameRepository,
     private val resultManager: GameResultManager
-) {
+): GameManager {
     private var shuffledIds = mutableListOf<String>()
     private var currentIndex = 0
 
-    fun saveScore(score: Int) {
+    override fun saveScore(score: Int) {
         resultManager.saveResult(score = score)
     }
 
-    suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
+    override suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
         if (shuffledIds.isEmpty()) {
             return when (val result = repository.getAllQuestionIds()) {
                 is ResultCore.Success -> {
@@ -30,7 +31,7 @@ class SynonymsGameManager @Inject constructor(
         return ResultCore.Success(Unit)
     }
 
-    suspend fun getNextQuestion(): ResultCore<SynonymsGame> {
+    override suspend fun getNextQuestion(): ResultCore<SynonymsGame> {
         if (currentIndex >= shuffledIds.size) {
             return ResultCore.Failure("No more questions")
         }
@@ -38,7 +39,7 @@ class SynonymsGameManager @Inject constructor(
         return repository.getQuestionById(nextId)
     }
 
-    fun reset() {
+    override fun reset() {
         shuffledIds.clear()
         currentIndex = 0
     }

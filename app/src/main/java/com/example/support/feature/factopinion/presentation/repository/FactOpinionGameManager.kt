@@ -1,5 +1,6 @@
 package com.example.support.feature.factopinion.presentation.repository
 
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.GameResultManager
 import com.example.support.core.util.ResultCore
 import com.example.support.feature.factopinion.presentation.data.FactOpinionGame
@@ -8,11 +9,11 @@ import javax.inject.Inject
 class FactOpinionGameManager @Inject constructor(
     private val repository: FactOpinionGameRepository,
     private val resultManager: GameResultManager
-    ) {
+    ): GameManager {
     private var shuffledIds = mutableListOf<String>()
     private var currentIndex = 0
 
-    suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
+    override suspend fun loadShuffledIdsIfNeeded(): ResultCore<Unit> {
         if (shuffledIds.isEmpty()) {
             return when (val result = repository.getAllQuestionIds()) {
                 is ResultCore.Success -> {
@@ -26,7 +27,7 @@ class FactOpinionGameManager @Inject constructor(
         return ResultCore.Success(Unit)
     }
 
-    suspend fun getNextQuestion(): ResultCore<FactOpinionGame> {
+    override suspend fun getNextQuestion(): ResultCore<FactOpinionGame> {
         if (currentIndex >= shuffledIds.size) {
             return ResultCore.Failure("No more questions")
         }
@@ -34,11 +35,11 @@ class FactOpinionGameManager @Inject constructor(
         return repository.getQuestionById(nextId)
     }
 
-    fun saveScore(score: Int) {
+    override fun saveScore(score: Int) {
         resultManager.saveResult(score)
     }
 
-    fun reset() {
+    override fun reset() {
         shuffledIds.clear()
         currentIndex = 0
     }

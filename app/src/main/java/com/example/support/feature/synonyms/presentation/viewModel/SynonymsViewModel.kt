@@ -6,11 +6,11 @@ import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
 import com.example.support.core.util.Constants
+import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
-import com.example.support.core.util.TimerManager
-import com.example.support.feature.factopinion.model.FactOpinionResult
-import com.example.support.feature.factopinion.model.FactOpinionState
+import com.example.support.core.util.timer.GameTimerController
+import com.example.support.core.util.timer.TimerManager
 import com.example.support.feature.synonyms.model.SynonymOption
 import com.example.support.feature.synonyms.model.SynonymsEvent
 import com.example.support.feature.synonyms.model.SynonymsResult
@@ -18,36 +18,22 @@ import com.example.support.feature.synonyms.model.SynonymsState
 import com.example.support.feature.synonyms.presentation.repository.SynonymsGameManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SynonymsViewModel @Inject constructor(
     navigator: Navigator,
-    private val timerManager: TimerManager,
+    timerManager: TimerManager,
+    gameTimerController: GameTimerController,
     private val hapticFeedbackManager: HapticFeedbackManager,
     private val gameManager: SynonymsGameManager
-) : BaseGameViewModel<SynonymsState, SynonymsEvent>(SynonymsState(), navigator), SynonymsController{
-
-    init {
-        timerManager.timerFlow
-            .onEach { time ->
-                time?.let {
-                    updateState(uiState.value.copy(timer = it))
-
-                    if (it == 0 && uiState.value.hasStarted) {
-                        val score = uiState.value.score
-                        gameManager.saveScore(score)
-                        navigator.navigate(NavigationEvent.Navigate(NavigationItem.GameCompletion.route))
-                        delay(300)
-                        reset()
-                    }
-                }
-            }
-            .launchIn(viewModelScope)
-    }
+) : BaseGameViewModel<SynonymsState, SynonymsEvent>(
+    SynonymsState(),
+    navigator,
+    timerManager,
+    gameTimerController
+), SynonymsController{
 
     override fun onEvent(event: SynonymsEvent) {
         when (event) {
@@ -64,14 +50,17 @@ class SynonymsViewModel @Inject constructor(
         }
     }
 
-    override fun onPauseClicked() {
-        super.onPauseClicked()
-        timerManager.pauseTimer()
-    }
-
-    override fun onResumePauseDialog() {
-        super.onResumePauseDialog()
-        timerManager.resumeTimer()
+    override fun initializeGame() {
+        updateState(uiState.value.copy(result = SynonymsResult.Loading))
+        viewModelScope.launch {
+            when (val init = gameManager.loadShuffledIdsIfNeeded()) {
+                is ResultCore.Failure -> {
+                    updateState(uiState.value.copy(result = SynonymsResult.Error(init.message)))
+                    return@launch
+                }
+                is ResultCore.Success -> loadNextQuestion()
+            }
+        }
     }
 
     override fun toggleSelection(index: Int) {
@@ -133,20 +122,6 @@ class SynonymsViewModel @Inject constructor(
         }
     }
 
-
-    private fun startGame() {
-        viewModelScope.launch {
-            when (val init = gameManager.loadShuffledIdsIfNeeded()) {
-                is ResultCore.Failure -> {
-                    updateState(uiState.value.copy(result = SynonymsResult.Error(init.message)))
-                    return@launch
-                }
-
-                is ResultCore.Success -> loadNextQuestion()
-            }
-        }
-    }
-
     private fun loadNextQuestion() {
         viewModelScope.launch {
             when (val result = gameManager.getNextQuestion()) {
@@ -177,12 +152,21 @@ class SynonymsViewModel @Inject constructor(
         }
     }
 
-
-    private fun reset() {
-        timerManager.resetTimer(viewModelScope)
-        gameManager.reset()
-        updateState(
-            SynonymsState()
-        )
+    override fun getGameManager(): GameManager = gameManager
+    override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        viewModelScope.launch {
+            navigator.navigate(NavigationEvent.Navigate(
+                NavigationItem.GameCompletion.route
+            ))
+            delay(300)
+            resetGame()
+        }
     }
+
+    override fun getCurrentScore(): Int = uiState.value.score
+
+    override fun isGameStarted(): Boolean = uiState.value.hasStarted
+
+    override fun createInitialState(): SynonymsState = SynonymsState()
 }

@@ -157,21 +157,21 @@ private val mockGames = listOf(
         id = "1",
         title = "Fact or Opinion",
         description = "Test your knowledge",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = NavigationItem.FactOpinion.route
     ),
     GameModel(
         id = "2",
         title = "Phrasal Verb",
         description = "Challenge yourself",
-        imgResource = R.drawable.img_game_person2,
+        imgResource = R.drawable.img_fact_opinion,
         route = NavigationItem.PhrasalVerbs.route
     ),
     GameModel(
         id = "3",
         title = "Third Game",
         description = "Improve your skills",
-        imgResource = R.drawable.img_game_person,
+        imgResource = R.drawable.img_phrasal_verb,
         route = NavigationItem.KeywordsCheck.route
     )
 )
