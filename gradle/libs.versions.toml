@@ -28,6 +28,7 @@ hiltNavigation = "1.2.0"
 firebaseDatabase = "21.0.0"
 firebaseAuth = "23.2.0"
 firebaseFirestoreKtx = "25.1.2"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,7 @@ room-compiler = { module="androidx.room:room-compiler", version.ref = "room" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 
 

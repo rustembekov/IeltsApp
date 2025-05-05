@@ -68,7 +68,7 @@ abstract class BaseGameViewModel<S : PauseState, E : Any>(
     /**
      * Get the game-specific manager
      */
-    abstract  fun getGameManager(): GameManager?
+    abstract fun getGameManager(): GameManager?
 
     /**
      * Get the current score
@@ -110,6 +110,7 @@ abstract class BaseGameViewModel<S : PauseState, E : Any>(
             navigator.navigate(NavigationEvent.Navigate(NavigationItem.Home.route))
         }
     }
+
 
     /**
      * Clean up resources when ViewModel is cleared

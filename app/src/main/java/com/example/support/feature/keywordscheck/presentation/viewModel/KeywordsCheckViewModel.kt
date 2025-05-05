@@ -3,7 +3,9 @@ package com.example.support.feature.keywordscheck.presentation.viewModel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
+import com.example.support.core.util.Constants
 import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
@@ -25,7 +27,8 @@ class KeywordsCheckViewModel @Inject constructor(
     timerManager: TimerManager,
     gameTimerController: GameTimerController,
     private val gameManager: KeywordsCheckGameManager,
-    private val hapticFeedbackManager: HapticFeedbackManager
+    private val hapticFeedbackManager: HapticFeedbackManager,
+    private val gamePreferences: GamePreferences
 ) : BaseGameViewModel<KeywordsCheckState, KeywordsCheckEvent>(
     KeywordsCheckState(),
     navigator,
@@ -64,9 +67,6 @@ class KeywordsCheckViewModel @Inject constructor(
             when (val result = gameManager.getNextQuestion()) {
                 is ResultCore.Success -> {
                     val computedMax = result.data.answers.sumOf { it.split(" ").size }
-                    Log.d("KeywordsCheckEvent", "Current Question: " + result.data.text)
-
-                    Log.d("KeywordsCheckEvent", "Correct Answer: " + result.data.answers)
                     updateState(
                         uiState.value.copy(
                             currentQuestion = result.data.text,
@@ -138,6 +138,8 @@ class KeywordsCheckViewModel @Inject constructor(
 
     override fun handleTimeExpired(score: Int) {
         gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.KEYWORDS_CHECK_GAME)
+
         viewModelScope.launch {
             navigator.navigate(com.example.support.core.navigation.model.NavigationEvent.Navigate(
                 com.example.support.core.navigation.model.NavigationItem.GameCompletion.route
@@ -168,7 +170,6 @@ class KeywordsCheckViewModel @Inject constructor(
         }
 
         updateState(currentState.copy(selectedWords = updated))
-        Log.d("KeywordsCheckEvent", "Selected Answers: " + updated.joinToString { it.text })
     }
 
     override fun getCurrentScore(): Int = uiState.value.score

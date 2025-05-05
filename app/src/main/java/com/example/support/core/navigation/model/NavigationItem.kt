@@ -1,20 +1,22 @@
 package com.example.support.core.navigation.model
 
+import com.example.support.core.util.Constants
+
 
 sealed class NavigationItem(val route: String) {
     data object Register : NavigationItem("register")
     
     data object Login : NavigationItem("login")
     
-    data object FactOpinion : NavigationItem("fact_opinion")
+    data object FactOpinion : NavigationItem(Constants.FACT_OPINION_GAME)
 
-    data object PhrasalVerbs : NavigationItem("phrasal_verbs")
+    data object PhrasalVerbs : NavigationItem(Constants.PHRASAL_VERBS_GAME)
 
-    data object KeywordsCheck : NavigationItem("keywords_check")
+    data object KeywordsCheck : NavigationItem(Constants.KEYWORDS_CHECK_GAME)
 
-    data object EssayBuilder : NavigationItem("essay_builder")
+    data object EssayBuilder : NavigationItem(Constants.ESSAY_BUILDER_GAME)
 
-    data object Synonyms : NavigationItem("synonyms")
+    data object Synonyms : NavigationItem(Constants.SYNONYMS_GAME)
 
     data object Home : NavigationItem("home")
 

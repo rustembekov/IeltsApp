@@ -3,9 +3,11 @@ package com.example.support.feature.phrasalverbs.presentation.viewModel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
+import com.example.support.core.util.Constants
 import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
@@ -18,6 +20,7 @@ import com.example.support.feature.phrasalverbs.presentation.repository.PhrasalV
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +29,7 @@ class PhrasalVerbsViewModel @Inject constructor(
     timerManager: TimerManager,
     gameTimerController: GameTimerController,
     private val gameManager: PhrasalVerbsGameManager,
+    private val gamePreferences: GamePreferences,
     private val vibrationManager: HapticFeedbackManager
 ) : BaseGameViewModel<PhrasalVerbsState, PhrasalVerbsEventEvent>(
     PhrasalVerbsState(),
@@ -71,7 +75,7 @@ class PhrasalVerbsViewModel @Inject constructor(
                             userInput = ""
                         )
                     )
-                    Log.d("PhrasalVerbsViewModel", "Answer: ${uiState.value.answer}")
+                    Timber.tag("PhrasalVerbsViewModel").d("Answer: %s", uiState.value.answer)
                 }
 
                 is ResultCore.Failure -> {
@@ -118,6 +122,7 @@ class PhrasalVerbsViewModel @Inject constructor(
 
     override fun handleTimeExpired(score: Int) {
         gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.PHRASAL_VERBS_GAME)
         viewModelScope.launch {
             navigator.navigate(NavigationEvent.Navigate(
                 NavigationItem.GameCompletion.route

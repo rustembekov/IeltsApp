@@ -39,7 +39,7 @@ class GameTimerController @Inject constructor(
                 time?.let {
                     updateTimerState(it)
 
-                    if (it == 0 && viewModel.isGameStarted()) {
+                    if (it == 0 && viewModel.isGameStarted() ) {
                         val score = viewModel.getCurrentScore()
                         onTimeExpired(score)
                     }

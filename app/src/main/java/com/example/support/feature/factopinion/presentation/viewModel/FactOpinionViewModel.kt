@@ -2,9 +2,11 @@ package com.example.support.feature.factopinion.presentation.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
+import com.example.support.core.util.Constants
 import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
@@ -25,7 +27,8 @@ class FactOpinionViewModel @Inject constructor(
     private val gameManager: FactOpinionGameManager,
     timerManager: TimerManager,
     gameTimerController: GameTimerController,
-    private val vibrationManager: HapticFeedbackManager
+    private val vibrationManager: HapticFeedbackManager,
+    private val gamePreferences: GamePreferences
 ) : BaseGameViewModel<FactOpinionState, FactOpinionEvent>(
     FactOpinionState(),
     navigator,
@@ -116,6 +119,7 @@ class FactOpinionViewModel @Inject constructor(
 
     override fun handleTimeExpired(score: Int) {
         gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.FACT_OPINION_GAME)
         viewModelScope.launch {
             navigator.navigate(NavigationEvent.Navigate(
                 NavigationItem.GameCompletion.route

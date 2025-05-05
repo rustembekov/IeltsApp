@@ -81,7 +81,7 @@ dependencies {
 
     implementation(libs.room.ktx)
     implementation(libs.room.runtime)
-
+    implementation(libs.timber)
     ksp(libs.room.compiler)
     implementation(libs.hilt.navigation.compose)
     implementation (libs.kotlinx.serialization.json)

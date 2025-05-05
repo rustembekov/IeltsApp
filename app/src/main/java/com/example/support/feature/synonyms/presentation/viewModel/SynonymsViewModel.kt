@@ -2,6 +2,7 @@ package com.example.support.feature.synonyms.presentation.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
 import com.example.support.core.navigation.model.NavigationEvent
 import com.example.support.core.navigation.model.NavigationItem
@@ -27,7 +28,8 @@ class SynonymsViewModel @Inject constructor(
     timerManager: TimerManager,
     gameTimerController: GameTimerController,
     private val hapticFeedbackManager: HapticFeedbackManager,
-    private val gameManager: SynonymsGameManager
+    private val gameManager: SynonymsGameManager,
+    private val gamePreferences: GamePreferences
 ) : BaseGameViewModel<SynonymsState, SynonymsEvent>(
     SynonymsState(),
     navigator,
@@ -38,11 +40,7 @@ class SynonymsViewModel @Inject constructor(
     override fun onEvent(event: SynonymsEvent) {
         when (event) {
             is SynonymsEvent.StartGame -> {
-                if (!uiState.value.hasStarted) {
-                    updateState(uiState.value.copy(hasStarted = true))
-                    startGame()
-                    timerManager.startTimer(viewModelScope, Constants.GAME_TIMER_DURATION)
-                }
+                startGame()
             }
             is SynonymsEvent.AnswerQuestion -> {
                 checkAnswer()
@@ -154,6 +152,8 @@ class SynonymsViewModel @Inject constructor(
 
     override fun getGameManager(): GameManager = gameManager
     override fun handleTimeExpired(score: Int) {
+        gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.SYNONYMS_GAME)
         gameManager.saveScore(score)
         viewModelScope.launch {
             navigator.navigate(NavigationEvent.Navigate(

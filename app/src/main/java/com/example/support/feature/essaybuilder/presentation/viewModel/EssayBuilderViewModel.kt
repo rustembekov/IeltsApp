@@ -2,7 +2,9 @@ package com.example.support.feature.essaybuilder.presentation.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseGameViewModel
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.navigation.Navigator
+import com.example.support.core.util.Constants
 import com.example.support.core.util.GameManager
 import com.example.support.core.util.HapticFeedbackManager
 import com.example.support.core.util.ResultCore
@@ -25,7 +27,8 @@ class EssayBuilderViewModel @Inject constructor(
     timerManager: TimerManager,
     gameTimerController: GameTimerController,
     private val gameManager: EssayBuilderGameManager,
-    private val hapticFeedbackManager: HapticFeedbackManager
+    private val hapticFeedbackManager: HapticFeedbackManager,
+    private val gamePreferences: GamePreferences
 ) : BaseGameViewModel<EssayBuilderState, EssayBuilderEvent>(
     EssayBuilderState(),
     navigator,
@@ -236,6 +239,7 @@ class EssayBuilderViewModel @Inject constructor(
 
     override fun handleTimeExpired(score: Int) {
         gameManager.saveScore(score)
+        gamePreferences.setLastPlayedGame(Constants.ESSAY_BUILDER_GAME)
         viewModelScope.launch {
             navigator.navigate(com.example.support.core.navigation.model.NavigationEvent.Navigate(
                 com.example.support.core.navigation.model.NavigationItem.GameCompletion.route

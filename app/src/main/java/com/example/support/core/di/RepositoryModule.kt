@@ -1,5 +1,6 @@
 package com.example.support.core.di
 import android.content.Context
+import com.example.support.core.data.GamePreferences
 import com.example.support.core.data.UserRepository
 import com.example.support.feature.essaybuilder.presentation.repository.EssayBuilderGameRepository
 import com.example.support.feature.factopinion.presentation.repository.FactOpinionGameRepository
@@ -74,8 +75,8 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideGameCompletionRepository(database: DatabaseReference): GameCompletionRepository {
-        return GameCompletionRepositoryImpl(database)
+    fun provideGameCompletionRepository(database: DatabaseReference, gamePreferences: GamePreferences): GameCompletionRepository {
+        return GameCompletionRepositoryImpl(database, gamePreferences)
     }
 
     @Provides

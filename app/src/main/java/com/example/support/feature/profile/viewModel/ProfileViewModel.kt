@@ -2,10 +2,9 @@ package com.example.support.feature.profile.viewModel
 
 import android.net.Uri
 import com.example.support.core.BaseViewModel
-import com.example.support.core.data.UserRepository
+import com.example.support.core.data.UserManager
 import com.example.support.core.util.AvatarManager
 import com.example.support.core.util.ResultCore
-import com.example.support.feature.home.model.HomeResult
 import com.example.support.feature.profile.model.ProfileEvent
 import com.example.support.feature.profile.model.ProfileResult
 import com.example.support.feature.profile.model.ProfileState
@@ -15,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val avatarManager: AvatarManager,
-    private val userRepository: UserRepository
+    private val userRepository: UserManager
 )  : BaseViewModel<ProfileState, ProfileEvent>(ProfileState()), ProfileController {
     override fun onEvent(event: ProfileEvent) {
         when (event) {
