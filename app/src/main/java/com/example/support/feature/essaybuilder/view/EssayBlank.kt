@@ -41,7 +41,7 @@ fun EssayBlank(
             .pointerInput(Unit) { detectTapGestures { onClick() } }
             .clip(MaterialTheme.shapes.medium)
             .background(bgColor)
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 8.dp)
     ) {
         Text(
             text = blank?.word ?: "______",

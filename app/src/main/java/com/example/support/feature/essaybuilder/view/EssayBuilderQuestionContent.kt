@@ -89,7 +89,6 @@ fun InlineTextWithBlanks(
 
     Layout(
         content = {
-            // Create composables for each token
             tokens.forEachIndexed { index, token ->
                 when {
                     token.isBlank -> {
@@ -134,7 +133,7 @@ fun InlineTextWithBlanks(
             }
 
             if (currentX + placeable.width > constraints.maxWidth && currentX > 0) {
-                currentY += lineHeight
+                currentY += lineHeight + spacingPx
                 currentX = 0
                 lineHeight = 0
             }
