@@ -1,6 +1,5 @@
 package com.example.support.feature.rating.presentation.viewModel
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.support.core.BaseViewModel
 import com.example.support.feature.rating.presentation.repository.RatingRepository
@@ -48,6 +47,8 @@ class RatingViewModel @Inject constructor(
                             result = RatingResult.Success
                         )
                     )
+                    delay(300)
+                    showPodium()
 
                     launch {
                         fetchAvatarsUseCase.execute(users.drop(10))
@@ -60,6 +61,10 @@ class RatingViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun showPodium() {
+        updateState(uiState.value.copy(podiumVisible = true))
     }
 
     override fun onEvent(event: RatingResult) {

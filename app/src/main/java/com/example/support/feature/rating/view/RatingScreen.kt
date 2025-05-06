@@ -55,6 +55,10 @@ private fun RatingScreenPreview() {
             TODO("Not yet implemented")
         }
 
+        override fun showPodium() {
+            TODO("Not yet implemented")
+        }
+
     }
     AppTheme(
         darkTheme = false

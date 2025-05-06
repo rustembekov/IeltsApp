@@ -40,7 +40,7 @@ import com.example.support.core.domain.User
 
 @Composable
 fun PodiumItem(
-    visible: Boolean = true,
+    visible: Boolean,
     user: User,
     height: Dp,
     avatarUrl: String?
@@ -156,6 +156,7 @@ private fun PodiumItemPreview() {
                 username = "testing@gmail.com"
             ),
             height = 48.dp,
+            visible = false,
             avatarUrl = null
 
         )
