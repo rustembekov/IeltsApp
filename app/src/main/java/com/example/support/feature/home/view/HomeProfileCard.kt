@@ -34,16 +34,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.support.R
+import com.example.support.core.domain.GameModel
 import com.example.support.core.navigation.model.NavigationItem
 import com.example.support.core.ui.AppTheme
 import com.example.support.core.domain.User
 import com.example.support.feature.home.model.HomeEvent
-import com.example.support.feature.home.model.HomeState
-import com.example.support.feature.home.viewModel.HomeController
+import com.example.support.feature.home.model.HomeUiState
+import com.example.support.feature.home.presentation.viewModel.HomeController
 
 @Composable
 fun HomeProfileCard(
-    state: HomeState,
+    state: HomeUiState.Content,
     controller: HomeController
 ) {
     Box(
@@ -160,7 +161,6 @@ fun HomeProfileCard(
     }
 }
 
-
 @Composable
 @Preview(showBackground = false)
 private fun HomeProfileCardPreview() {
@@ -177,11 +177,13 @@ private fun HomeProfileCardPreview() {
     }
     AppTheme {
         HomeProfileCard(
-            state = HomeState(
+            state = HomeUiState.Content(
                 user = User(
                     email = "testing@gmail.com",
                     username = "testing"
-                )
+                ),
+                games = emptyList(),
+                selectedImageUri = null
             ),
             controller = mockController
         )

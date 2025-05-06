@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Support" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Add navigation bar color customization -->
+        <item name="android:navigationBarColor">@color/navigation_bar_color</item>
 
-    <style name="Theme.Support" parent="android:Theme.Material.Light.NoActionBar" />
+        <!-- Optional: For light-colored navigation bars, use dark icons -->
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
 </resources>

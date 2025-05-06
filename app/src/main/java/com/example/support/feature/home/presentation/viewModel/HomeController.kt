@@ -1,4 +1,4 @@
-package com.example.support.feature.home.viewModel
+package com.example.support.feature.home.presentation.viewModel
 
 import com.example.support.feature.home.model.HomeEvent
 

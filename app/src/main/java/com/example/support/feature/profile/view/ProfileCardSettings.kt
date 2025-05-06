@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,14 +32,16 @@ fun ProfileCardSettings(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(60.dp)
             .clip(RoundedCornerShape(24.dp))
             .border(
                 width = 1.dp,
                 color = AppTheme.colors.primaryVariant,
                 shape = RoundedCornerShape(24.dp)
             )
+
             .background(color = AppTheme.colors.homeItemPrimary)
-            .padding(24.dp)
+            .padding(horizontal = 16.dp)
             .clickable { onClick()},
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically

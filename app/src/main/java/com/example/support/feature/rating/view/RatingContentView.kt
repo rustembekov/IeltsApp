@@ -1,6 +1,5 @@
 package com.example.support.feature.rating.view
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -101,7 +100,7 @@ private fun PodiumList(state: RatingState) {
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomStart)
-                .padding(top = 48.dp) // push row below header
+                .padding(top = 48.dp)
         ) {
             Row(
                 modifier = Modifier
@@ -111,18 +110,16 @@ private fun PodiumList(state: RatingState) {
                 verticalAlignment = Alignment.Bottom
             ) {
                 val heights = mapOf(1 to 88.dp, 2 to 64.dp, 3 to 64.dp)
-                // 2nd, 1st, 3rd place order visually
                 val order = listOf(2, 1, 3)
 
                 order.mapNotNull { place ->
                     topThree.find { it.rank == place }?.let { user ->
-                        PodiumItem(user = user, height = heights[place] ?: 60.dp, avatarUrl = state.avatars[user.id])
+                        PodiumItem(user = user, height = heights[place] ?: 60.dp, avatarUrl = state.avatars[user.id], visible = state.podiumVisible)
                     }
                 }
             }
         }
 
-        // Decorative background circles (optional)
         Box(
             modifier = Modifier
                 .size(140.dp)
@@ -154,12 +151,8 @@ private fun ListPlayers(state: RatingState) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         val remainingPlayers = state.players.filter { it.rank > 3 }
-//        for ((key, value) in state.avatars) {
-//            Log.d("RatingViewModel", "Key: $key, Value: $value")
-//        }
 
         items(remainingPlayers) { player ->
-            Log.d("RatingViewModel", "${state.avatars[player.id]}")
             PlayerRow(player = player, avatarUrl = state.avatars[player.id])
         }
     }
@@ -217,6 +210,7 @@ private fun RatingContentViewPreview() {
 
     val mockController = object : RatingController {
         override fun loadUsers() {}
+        override fun showPodium() {}
     }
 
     AppTheme {

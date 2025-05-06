@@ -23,13 +23,13 @@ import com.example.support.core.domain.GameModel
 import com.example.support.core.domain.User
 import com.example.support.feature.home.model.HomeEvent
 import com.example.support.core.ui.AppTheme.colors as ColorApp
-import com.example.support.feature.home.model.HomeState
-import com.example.support.feature.home.viewModel.HomeController
+import com.example.support.feature.home.model.HomeUiState
+import com.example.support.feature.home.presentation.viewModel.HomeController
 
 @Composable
 fun HomeContentView(
     modifier: Modifier = Modifier,
-    state: HomeState,
+    state: HomeUiState.Content,
     controller: HomeController
 ) {
     Box(
@@ -188,14 +188,15 @@ private fun HomeContentViewPreview() {
         }
         HomeContentView(
             controller = mockController,
-            state = HomeState(
+            state = HomeUiState.Content(
                 user = User(
                     username = "Irina",
                     email = "testing@gmail.com",
                     rank = 23,
                     score = 120
                 ),
-                games = mockGames
+                games = mockGames,
+                selectedImageUri = null
             )
         )
     }

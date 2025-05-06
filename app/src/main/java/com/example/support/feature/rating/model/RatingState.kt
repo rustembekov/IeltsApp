@@ -5,7 +5,8 @@ import com.example.support.core.domain.User
 data class RatingState(
     val players: List<User> = emptyList(),
     val avatars: Map<String, String> = emptyMap(),
-    val result: RatingResult = RatingResult.Loading
+    val result: RatingResult = RatingResult.Loading,
+    val podiumVisible: Boolean = false
 )
 
 sealed class RatingResult {
