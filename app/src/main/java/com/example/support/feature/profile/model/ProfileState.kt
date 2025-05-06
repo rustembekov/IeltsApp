@@ -11,7 +11,7 @@ data class ProfileState(
         ProfileSettings(icon = R.drawable.ic_settings, name = R.string.settings, ProfileEvent.SettingsProfile),
         ProfileSettings(icon = R.drawable.ic_global, name = R.string.language, ProfileEvent.LanguageProfile),
         ProfileSettings(icon = R.drawable.ic_block, name = R.string.login_security, ProfileEvent.LoginSecurityProfile),
-        ProfileSettings(icon = R.drawable.ic_profile_delete, name = R.string.delete_account, ProfileEvent.DeleteAccountProfile)
+        ProfileSettings(icon = R.drawable.ic_log_out, name = R.string.log_out, ProfileEvent.LogOutAccountProfile)
     ),
     val selectedImageUri: Uri? = null,
     val launchImagePicker: Boolean = false,
@@ -29,7 +29,7 @@ sealed class ProfileEvent {
     data object SettingsProfile : ProfileEvent()
     data object LanguageProfile : ProfileEvent()
     data object LoginSecurityProfile : ProfileEvent()
-    data object DeleteAccountProfile : ProfileEvent()
+    data object LogOutAccountProfile : ProfileEvent()
 }
 
 sealed class ProfileResult {
